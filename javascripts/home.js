@@ -269,10 +269,10 @@ with (scope('Home', 'App')) {
   define('repository_card', function(repository) {
     var repo_url = '#repos/' + repository.full_name;
     return div({ 'class': 'card', style: 'height: 470px', onClick: curry(set_route, repository.href) },
-      div({ style: 'background: rgba(220,220,255,0.5); position: absolute; color: #3c3; font-size: 150%; padding: 5px' },
+      div({ style: 'background: rgba(220,220,255,0.7); position: absolute; color: #3c3; font-size: 200%; padding: 20px; border-radius: 0 0 20px 0' },
         money(repository.bounty_total || 0)
       ),
-      div({ style: 'text-align: center'},
+      div({ style: 'text-align: right'},
         a({ href: repo_url }, img({ style: 'width: 120px', src: repository.avatar_url }))
       ),
 
