@@ -18,7 +18,7 @@ with (scope('Home', 'App')) {
     render({ into: 'before-content' },
       section({ id: 'homepage' },
         (logged_in() ? homepage_box_authed : homepage_box)(),
-        card_filter_box(),
+//        card_filter_box(),
         div({ id: 'column-container' }),
         div({ style: 'clear: both' }),
         div({ id: 'card-loader-div' }, 'Loading...')
@@ -267,13 +267,17 @@ with (scope('Home', 'App')) {
   });
 
   define('repository_card', function(repository) {
-    return div({ 'class': 'card', onClick: curry(set_route, repository.href) },
-      a({ href: '#repos/' + repository.name }, img({ style: 'width: 100%; ', src: repository.avatar_url })),
+    var repo_url = '#repos/' + repository.full_name;
+    return div({ 'class': 'card', style: 'height: 470px', onClick: curry(set_route, repository.href) },
+      div({ style: 'background: rgba(220,220,255,0.5); position: absolute; color: #3c3; font-size: 150%; padding: 5px' },
+        money(repository.bounty_total || 0)
+      ),
+      a({ href: repo_url }, img({ style: 'width: 100%; ', src: repository.avatar_url })),
 
       div({ style: 'padding: 7px; background: #EEE; margin-bottom: 5px;' },
         div({ style: 'margin: 4px 0; font-size: 16px; font-weight: bold' }, a({ href: '#repos/' + repository.full_name, style: 'color: #333' }, repository.display_name)),
 
-        div({ style: 'overflow: auto; color: #999; font-size: 80%;' },
+        div({ style: 'overflow: auto; height: 60px; color: #999; font-size: 80%;' },
           abbreviated_text(repository.description, 100)
         ),
 
@@ -283,20 +287,14 @@ with (scope('Home', 'App')) {
         )
       ),
 
-      div({ style: 'margin-bottom: 10px; font-size: 12px' },
-        a({ href: '#' }, 'Some awesome task you should really start working on'),
-        a({ href: '#', style: 'display: inline; vertical-align: middle; text-decoration: none; color: #48B848; margin-left: 8px' }, money(150))
-      ),
+      repository.most_bounteous_issues.map(function (issue) {
+        var issue_url = repo_url + '/issues/' + issue.number;
+        return div({ style: 'margin-bottom: 10px; font-size: 12px' },
+          a({ href: issue_url }, abbreviated_text(issue.title, 100)),
+          a({ href: issue_url, style: 'display: inline; vertical-align: middle; text-decoration: none; color: #48B848; margin-left: 8px' }, money(issue.bounty_total))
+        )
+      })
 
-      div({ style: 'margin-bottom: 10px; font-size: 12px' },
-        a({ href: '#' }, 'Oh and this thing is so super important... you really should add some money to it!'),
-        a({ href: '#', style: 'display: inline; vertical-align: middle; text-decoration: none; color: #48B848; margin-left: 8px' }, money(85))
-      ),
-
-      div({ style: 'margin-bottom: 10px; font-size: 12px' },
-        a({ href: '#' }, 'And somethign else awesome'),
-        a({ href: '#', style: 'display: inline; vertical-align: middle; text-decoration: none; color: #48B848; margin-left: 8px' }, money(45))
-      )
     );
   });
 
