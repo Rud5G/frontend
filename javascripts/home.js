@@ -272,7 +272,9 @@ with (scope('Home', 'App')) {
       div({ style: 'background: rgba(220,220,255,0.5); position: absolute; color: #3c3; font-size: 150%; padding: 5px' },
         money(repository.bounty_total || 0)
       ),
-      a({ href: repo_url }, img({ style: 'width: 100%; ', src: repository.avatar_url })),
+      div({ style: 'text-align: center'},
+        a({ href: repo_url }, img({ style: 'width: 120px', src: repository.avatar_url }))
+      ),
 
       div({ style: 'padding: 7px; background: #EEE; margin-bottom: 5px;' },
         div({ style: 'margin: 4px 0; font-size: 16px; font-weight: bold' }, a({ href: '#repos/' + repository.full_name, style: 'color: #333' }, repository.display_name)),
