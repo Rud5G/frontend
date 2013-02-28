@@ -230,22 +230,6 @@ with (scope('BountySource')) {
     api('/users/'+profile_id, callback);
   });
 
-  define('get_pull_requests', function(login, repository, github_user_login, callback) {
-    api('/github/repos/'+login+'/'+repository+'/pulls/'+github_user_login, callback);
-  });
-
-  define('create_solution', function(login, repository, issue_number, pull_request_number, callback) {
-    api('/github/repos/'+login+'/'+repository+'/issues/'+issue_number+'/solutions', 'POST', { pull_request_number: pull_request_number }, callback);
-  });
-
-  define('get_solutions', function(callback) {
-    api('/user/solutions', callback);
-  });
-
-  define('get_solution', function(solution_id, callback) {
-    api('/user/solutions/'+solution_id, callback);
-  });
-
   define('get_rewards', function(fundraiser_id, callback) {
     api('/user/fundraisers/'+fundraiser_id+'/rewards', 'GET', data, callback);
   });
@@ -269,4 +253,62 @@ with (scope('BountySource')) {
   define('get_friends_activity', function(callback) {
     api('/user/notifications/friends', callback);
   });
+
+  /*
+  * Solutions
+  * */
+  define('get_solutions', function(callback) {
+    api('/user/solutions', callback);
+  });
+
+  define('get_solution', function(id, callback) {
+    api('/user/solutions/'+id, callback);
+  });
+
+  define('create_solution', function(issue_id, callback) {
+    api('/user/solutions', 'POST', { issue_id: issue_id }, callback);
+  });
+
+  define('update_solution', function(id, data, callback) {
+    api('/user/solutions/'+id, 'PUT', data, callback);
+  });
+
+  define('destroy_solution', function(id, data, callback) {
+    api('/user/solutions/'+id, 'DELETE', data, callback);
+  });
+
+  /*
+  * Solution Implementations
+  * */
+  define('get_implementation', function(solution_id, callback) {
+    api('/user/solutions/'+solution_id+'/implementation', callback);
+  });
+
+  define('create_implementation', function(solution_id, data, callback) {
+    api('/user/solutions/'+solution_id+'/implementation', 'POST', data, callback);
+  });
+
+  define('update_implementation', function(solution_id, data, callback) {
+    api('/user/solutions/'+solution_id+'/implementation', 'PUT', data, callback);
+  });
+
+  define('destroy_implementation', function(solution_id, callback) {
+    api('/user/solutions/'+solution_id+'/implementation', 'DELETE', callback);
+  });
+
+  /*
+  * Solution Implementation Notes
+  * */
+  define('create_implementation_note', function(solution_id, body, callback) {
+    api('/user/solutions/'+solution_id+'/implementation/notes', 'POST', { body: body }, callback);
+  });
+
+  define('update_implementation_note', function(solution_id, id, body, callback) {
+    api('/user/solutions/'+solution_id+'/implementation/notes/'+id, 'POST', { body: body }, callback);
+  });
+
+  define('destroy_implementation_note', function(solution_id, id, body, callback) {
+    api('/user/solutions/'+solution_id+'/implementation/notes/'+id, 'DELETE', callback);
+  });
+
 }
