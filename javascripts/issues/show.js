@@ -26,16 +26,18 @@ with (scope('Issue', 'App')) {
 
       render({ into: target_div },
         div({ 'class': 'split-main' },
-          curry(DeveloperBox.solution_status_for_issue, issue),
-
           // used to render messages into
           messages(),
 
           // title of issue, with closed or open notification.
           // if issue is closed, add line-through
-          h1({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656' }, 
+          h1({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656; margin: 10px;' },
             span({ style: issue.closed ? 'text-decoration: line-through;' : '' }, '#' + issue.number + ': ' + issue.title),
             div({ style: 'padding-left: 20px; display: inline-block;' }, Issue.status_element(issue))
+          ),
+
+          div({ style: 'margin-bottom: 20px;' },
+            curry(DeveloperBox.solution_status_for_issue, issue)
           ),
 
           github_user_html_box({ user: issue.user, body_html: issue.body, created_at: issue.remote_created_at }),
