@@ -277,38 +277,11 @@ with (scope('BountySource')) {
     api('/user/solutions/'+id, 'DELETE', data, callback);
   });
 
-  /*
-  * Solution Implementations
-  * */
-  define('get_implementation', function(solution_id, callback) {
-    api('/user/solutions/'+solution_id+'/implementation', callback);
+  define('submit_solution', function(id, callback) {
+    api('/user/solutions/'+id+'/submit', 'POST', callback);
   });
 
-  define('create_implementation', function(solution_id, data, callback) {
-    api('/user/solutions/'+solution_id+'/implementation', 'POST', data, callback);
+  define('solutions_for_issue', function(issue_id, callback) {
+    api('/issues/'+issue_id+'/solutions', callback);
   });
-
-  define('update_implementation', function(solution_id, data, callback) {
-    api('/user/solutions/'+solution_id+'/implementation', 'PUT', data, callback);
-  });
-
-  define('destroy_implementation', function(solution_id, callback) {
-    api('/user/solutions/'+solution_id+'/implementation', 'DELETE', callback);
-  });
-
-  /*
-  * Solution Implementation Notes
-  * */
-  define('create_implementation_note', function(solution_id, body, callback) {
-    api('/user/solutions/'+solution_id+'/implementation/notes', 'POST', { body: body }, callback);
-  });
-
-  define('update_implementation_note', function(solution_id, id, body, callback) {
-    api('/user/solutions/'+solution_id+'/implementation/notes/'+id, 'POST', { body: body }, callback);
-  });
-
-  define('destroy_implementation_note', function(solution_id, id, body, callback) {
-    api('/user/solutions/'+solution_id+'/implementation/notes/'+id, 'DELETE', callback);
-  });
-
 }
