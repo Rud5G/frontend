@@ -71,7 +71,7 @@ with (scope('Show','Solution')) {
                 )
               ),
               fieldset({ 'class': 'no-label' },
-                submit({ 'class': 'blue' }, 'Update')
+                submit({ 'class': 'green' }, 'Update')
               )
             )
           );
@@ -97,12 +97,14 @@ with (scope('Show','Solution')) {
                 body_input
               ),
               fieldset({ 'class': 'no-label' },
-                submit({ 'class': 'blue' }, 'Submit Code')
+                submit({ 'class': 'blue' }, 'Submit Code'),
+                a({ 'class': 'gray', href: destroy_solution, style: 'display: inline-block; vertical-align: middle; width: 200px; margin-left: 10px;' }, 'Stop Work')
               )
             )
           );
         }
       } else {
+        render({ into: Show.target_div }, '');
         render({ into: Show.error_message_container }, error_message(response.data.error));
       }
     })
@@ -128,6 +130,18 @@ with (scope('Show','Solution')) {
         render({ into: Show.submit_solution_errors_container }, error_message(response.data.error));
       }
     });
+  });
+
+  define('destroy_solution', function() {
+    render({ into: Show.submit_solution_errors_container }, '');
+
+    BountySource.destroy_solution(Show.solution.id, function(response) {
+      if (response.meta.success) {
+        set_route(Show.solution.issue.frontend_url);
+      } else {
+        render({ into: Show.submit_solution_errors_container }, errors_message(response.data.error));
+      }
+    })
   });
 
   define('update_solution', function(form_data) {
