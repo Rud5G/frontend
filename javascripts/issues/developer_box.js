@@ -34,7 +34,7 @@ with (scope('DeveloperBox','Issue')) {
               "If you feel that this solution does not sufficiently solve the issue, file a ",
               a({ href: 'mailto:support@bountysource.com?subject=Dispute - Issue ID#'+solution.issue.id+'&body='+solution.issue.frontend_url }, 'dispute'),
               " with us. If there are no outstanding disputes after ",
-              strong(new Date(solution.dispute_period_end_date).toDateString()),
+              strong(formatted_date(solution.dispute_period_end_date)),
               ", then the solution will be accepted and the bounty paid out."
             )
           )
