@@ -1,108 +1,147 @@
-with (scope('Solution', 'App')) {
-  route('#solutions/:solution_id', function(solution_id) {
-    var target_div = div('Loading...');
+with (scope('Show','Solution')) {
+  route('#solutions/:id', function(id) {
+    Show.error_message_container          = div();
+    Show.submit_solution_errors_container = div(),
+    Show.update_solution_errors_container = div({ style: 'width: 525px;' }),
+    Show.target_div                       = div('Loading...');
 
-    render(
+    var breadrcrumbs_div = div(
       breadcrumbs(
         a({ href: '#' }, 'Home'),
-        a({ href: '#solutions' }, 'My Solutions'),
-        span({ id: 'solution-title' }, 'Loading...')
+        'Loading...'
       ),
-      target_div
+      Show.error_message_container,
+      Show.target_div
     );
 
-    BountySource.get_solution(solution_id, function(response) {
+    render(breadrcrumbs_div, Show.target_div);
+
+    BountySource.get_solution(id, function(response) {
       if (response.meta.success) {
-        var solution = response.data;
+        Show.solution = response.data;
 
-        render({ target: 'solution-title' }, solution.issue.title);
+        // fill in the breadcrumbs
+        render({ into: breadrcrumbs_div },
+          breadcrumbs(
+            a({ href: '#' }, 'Home'),
+            a({ href: Show.solution.issue.repository.frontend_path }, Show.solution.issue.repository.full_name),
+            a({ href: Show.solution.issue.repository.frontend_path+'/issues' }, 'Issues'),
+            a({ href: Show.solution.issue.frontend_url }, '#'+Show.solution.issue.number),
+            'Solution'
+          )
+        );
 
-        if (solution.accepted && !solution.disputed && !solution.in_dispute_period) {
-          render({ into: target_div },
+        if (Show.solution.accepted) {
+          render({ into: Show.target_div },
             h2('Solution Accepted!'),
-            p("Congratulations, your solution has been accepted and merged into the project!"),
-            a({ 'class': 'green pledge-button', style: 'width: 250px;', href: '#solutions/'+solution.id+'/payout' }, 'Claim Bounty')
+            p('Congrats, your solution has been accepted, and you won the bounty!'),
+            a({ 'class': 'green', style: 'display: inline-block;' }, 'Collect Thy Booty')
+          );
+        } else if (Show.solution.submitted) {
+          render({ into: Show.target_div },
+            h2('Solution Submitted!'),
+            p("Awesome, we have received your proposed solution for this issue, and will keep track of it's status from here."),
+
+            h3("Now what?"),
+            p("The following needs to happen before you earn the bounty:"),
+            ol(
+              li("Your solution must be merged into the project by the committers"),
+              li("Your solution must have no outstanding disputes by any of the backers after ", strong((new Date(solution.dispute_period_end_date)).toDateString()))
+            ),
+
+            h3("Update your submission"),
+            form({ 'class': 'fancy', action: update_solution },
+              fieldset({ 'class': 'no-label' },
+                Show.update_solution_errors_container
+              ),
+              fieldset({ 'for': 'code_url' },
+                label('Code URL:'),
+                url({
+                  required: true,
+                  name: 'code_url',
+                  placeholder: 'https://github.com/bountysource/frontend/pull/2',
+                  style: 'width: 500px; font-size: 14px;',
+                  value: solution.code_url||''
+                })
+              ),
+              fieldset({ 'for': 'body' },
+                label('Submission Message:'),
+                textarea({ required: true, name: 'body', placeholder: 'Removed X from Y, and refactored Z', style: 'width: 500px; height: 150px;' },
+                  solution.body
+                )
+              ),
+              fieldset({ 'class': 'no-label' },
+                submit({ 'class': 'blue' }, 'Update')
+              )
+            )
           );
         } else {
-          render({ into: target_div },
-            div({ 'class': 'split-main'},
-              status_description(solution),
+          var code_url_input = url({ required: true, name: 'code_url', placeholder: 'https://github.com/bountysource/frontend/pull/2', style: 'width: 500px; font-size: 14px;' });
+          var body_input = textarea({ required: true, name: 'body', placeholder: 'Removed X from Y, and refactored Z', style: 'width: 500px; height: 150px;' });
 
-              table(
-                tr({ style: 'height: 40px;' },
-                  td('Issue Status:'),
-                  td({ style: 'text-align: center;' }, Issue.status_element(solution.issue))
-                ),
-                tr({ style: 'height: 40px;' },
-                  td('Solution Status:'),
-                  td({ style: 'text-align: center;' }, Solution.status_element(solution))
-                )
+          code_url_input.addEventListener('blur', update_solution_event_callback);
+          body_input.addEventListener('blur', update_solution_event_callback);
+
+          render({ into: Show.target_div },
+            h2('Started a Solution'),
+            p("You have started working on a solution to \"", a({ href: Show.solution.issue.frontend_url }, Show.solution.issue.title), '"'),
+            p("When you are finished with your solution, fill in the form below so that we can track its progress."),
+
+            form({ 'class': 'fancy', action: submit_solution },
+              fieldset({ 'for': 'code_url' },
+                label('Code URL:'),
+                code_url_input
+              ),
+              fieldset({ 'for': 'body' },
+                label('Submission Message:'),
+                body_input
+              ),
+              fieldset({ 'class': 'no-label' },
+                submit({ 'class': 'blue' }, 'Submit Code')
               )
-            ),
-
-            div({ 'class': 'split-side'},
-              Issue.card(solution.issue)
-            ),
-
-            div({ 'class': 'split-end'})
+            )
           );
         }
       } else {
-        render({ into: target_div }, response.data.error);
+        render({ into: Show.error_message_container }, error_message(response.data.error));
+      }
+    })
+  });
+
+  define('update_solution_event_callback', function() {
+    var request_data = {};
+    request_data[this.getAttribute('name')] = this.value;
+    BountySource.update_solution(Show.solution.id, request_data, function(response) {
+      if (!response.meta.success) {
+        render({ into: Show.submit_solution_errors_container }, error_message(response.data.error));
       }
     });
   });
 
-  // landing page for code submission
-  route('#solutions/:solution_id/receipt', function(solution_id) {
-    var target_div = div('Loading...');
+  define('submit_solution', function() {
+    render({ into: Show.submit_solution_errors_container }, '');
 
-    render(
-      breadcrumbs(
-        a({ href: '#' }, 'Home'),
-        a({ href: '#solutions' }, 'My Solutions'),
-        span({ id: 'solution-title' }, 'Loading...'),
-        'Solution Received!'
-      ),
-      target_div
-    );
-
-    BountySource.get_solution(solution_id, function(response) {
+    BountySource.submit_solution(Show.solution.id, function(response) {
       if (response.meta.success) {
-        var solution = response.data;
-
-        render({ target: 'solution-title' }, a({ href: Solution.get_href(solution) }, solution.issue.title));
-
-        render({ into: target_div },
-          div({ 'class': 'split-main'},
-            h2('Solution Submitted!'),
-            p("You will be able to claim the bounty when your pull request is merged and the underlying issue is closed.")
-          ),
-
-          div({ 'class': 'split-side'},
-            Issue.card(solution.issue)
-          ),
-
-          div({ 'class': 'split-end'})
-        );
+        set_route(get_route());
       } else {
-        render({ into: target_div }, error_message(response.data.error));
+        render({ into: Show.submit_solution_errors_container }, error_message(response.data.error));
       }
     });
   });
 
-  define('facebook_share_solution_url', function(solution) {
-    return Facebook.share_dialog_url({
-      link:         encode_html(BountySource.www_host+'#repos/'+solution.issue.repository.full_name+'/issues/'+solution.issue.number),
-      title:        ("I submitted a solution to " + solution.issue.repository.full_name + " on BountySource."),
-      description:  ("If my solution is accepted I will claim the bounty, which is currently at " + money(solution.issue.bounty_total) + ".")
-    });
-  });
+  define('update_solution', function(form_data) {
+    render({ into: Show.update_solution_errors_container },'');
 
-  define('twitter_share_solution_url', function(solution) {
-    return Twitter.share_dialog_url({
-      url:  encode_html(BountySource.www_host+'#repos/'+solution.issue.repository.full_name+'/issues/'+solution.issue.number),
-      text: ("I submitted a solution to " + solution.issue.repository.full_name + " on BountySource.")
-    });
+    BountySource.update_solution(Show.solution.id, form_data, function(response) {
+      if (response.meta.success) {
+        // update the cached solution model
+        Show.solution = response.data;
+
+        render({ into: Show.update_solution_errors_container }, small_success_message("Solution updated!"));
+      } else {
+        render({ into: Show.update_solution_errors_container }, small_error_message(response.data.error));
+      }
+    })
   });
 }

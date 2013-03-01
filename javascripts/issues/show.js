@@ -26,6 +26,7 @@ with (scope('Issue', 'App')) {
 
       render({ into: target_div },
         div({ 'class': 'split-main' },
+          curry(DeveloperBox.solution_status_for_issue, issue),
 
           // used to render messages into
           messages(),
@@ -53,7 +54,7 @@ with (scope('Issue', 'App')) {
         div({ 'class': 'split-side'},
           !issue.closed && !issue.code && section(
             bounty_box(issue),
-            developer_box(issue)
+            DeveloperBox.create(issue)
           )
         ),
 
@@ -115,81 +116,6 @@ with (scope('Issue', 'App')) {
 
     BountySource.make_payment(payment_data, function(errors) {
       render({ target: 'create-bounty-errors' }, error_message(errors));
-    });
-  });
-
-  define('developer_box', function(issue) {
-    var developer_div = div({ id: 'developer-box' }, p({ style: 'text-align: center;' }, 'Loading...'));
-
-    var link_github_account_content = div({ style: 'text-align: center;' },
-      info_message("Want to submit a pull request to solve this issue and earn the bounty?"),
-      a({ 'class': 'btn-auth btn-github large hover', style: 'font-size: 16px;', href: Github.auth_url() }, "Link with GitHub")
-    );
-
-    // if issue has solution, a pull request has already been submitted
-    if (issue.solution) {
-      var pull_request = issue.solution.pull_request;
-      render({ into: developer_div },
-        success_message({ style: 'margin: 0;' }, "Pull request submitted."),
-        br(),
-        a({ 'class': 'green', href: Solution.get_href(issue.solution) }, 'View Solution')
-      )
-    } else if (!logged_in()) {
-      render({ into: developer_div }, link_github_account_content);
-    } else {
-      BountySource.get_cached_user_info(function(user_info) {
-        if (logged_in() && user_info.github_user) {
-          // asynchronously load pull requests for the repo
-          BountySource.get_pull_requests(issue.repository.owner.login, issue.repository.name, user_info.github_user.login, function(response) {
-            if (response.meta.success) {
-              if (response.data.length <= 0) {
-                render({ into: developer_div },
-                  info_message({ style: 'margin: 0; text-align: center;' },
-                    span("Submit a pull request through ", a({ href: 'https://github.com/'+issue.repository.full_name, target: '_blank' }, "GitHub"), ", then you can select it as a solution here.")
-                  )
-                );
-              } else {
-                render({ into: developer_div },
-
-                  form({ action: curry(create_solution, issue.repository.owner.login, issue.repository.name, issue.number), style: 'text-align: center;' },
-                    div({ id: 'developer-box-messages' }),
-
-                    span({ style: 'margin-bottom: 10px; display: block;' }, "Your pull requests for ", a({ href: 'https://github.com/'+issue.repository.full_name+'/pulls', target: '_blank' }, issue.repository.full_name), ':'),
-
-                    select({ name: 'pull_request_number', style: 'width: 100%; margin-bottom: 15px;' },
-                      response.data.map(function(pull_request) {
-                        return option({ value: pull_request.number }, '#'+pull_request.number+': '+pull_request.title)
-                      })
-                    ),
-
-                    submit({ 'class': 'green' }, "Submit Solution")
-                  )
-                );
-              }
-            }
-          });
-        } else {
-          render({ into: developer_div }, link_github_account_content);
-        }
-      });
-    }
-
-    return div({ style: 'background: #f1f1f1; padding: 0 21px 21px 21px; margin: 20px 15px; border-bottom: 1px solid #e3e3e3;' },
-      ribbon_header("Developers"),
-      br(),
-      developer_div
-    );
-  });
-  
-  define('create_solution', function(login, repository, issue_number, form_data) {
-    // hide('developer-box');
-
-    BountySource.create_solution(login, repository, issue_number, form_data.pull_request_number, function(response) {
-      if (response.meta.success) {
-        set_route('#solutions/'+response.data.id+'/receipt');
-      } else {
-        render({ target: 'developer-box-messages' }, error_message(response.data.error));
-      }
     });
   });
 }

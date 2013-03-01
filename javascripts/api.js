@@ -282,6 +282,7 @@ with (scope('BountySource')) {
   });
 
   define('solutions_for_issue', function(issue_id, callback) {
+
     api('/issues/'+issue_id+'/solutions', callback);
   });
 }

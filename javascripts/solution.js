@@ -82,7 +82,7 @@ with (scope('Solution','App')) {
           )
         )
       );
-    } else if (solution.pull_request.merged) {
+    } else if (solution.pull_request && solution.pull_request.merged) {
       return info_message({ style: 'margin: 0;' },
         p("The pull request that you submitted has been merged, but the underlying issue has not yet been closed."),
         p("Your solution will be accepted when your pull request is merged, and the underlying issue is closed."),
