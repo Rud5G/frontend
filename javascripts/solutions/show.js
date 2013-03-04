@@ -20,13 +20,15 @@ with (scope('Show','Solution')) {
       if (response.meta.success) {
         Show.solution = response.data;
 
+        console.log(response.data);
+
         // fill in the breadcrumbs
         render({ into: breadrcrumbs_div },
           breadcrumbs(
             a({ href: '#' }, 'Home'),
-            a({ href: Show.solution.issue.repository.frontend_path }, Show.solution.issue.repository.full_name),
-            a({ href: Show.solution.issue.repository.frontend_path+'/issues' }, 'Issues'),
-            a({ href: Show.solution.issue.frontend_url }, '#'+Show.solution.issue.number),
+            a({ href: Show.solution.issue.tracker.frontend_path }, Show.solution.issue.tracker.name ),
+            a({ href: Show.solution.issue.tracker.frontend_path+'/issues' }, 'Issues'),
+            a({ href: Show.solution.issue.frontend_path }, '#'+Show.solution.issue.number),
             'Solution'
           )
         );
@@ -84,7 +86,7 @@ with (scope('Show','Solution')) {
 
           render({ into: Show.target_div },
             h2('Started a Solution'),
-            p("You have started working on a solution to \"", a({ href: Show.solution.issue.frontend_url }, Show.solution.issue.title), '"'),
+            p("You have started working on a solution to \"", a({ href: Show.solution.issue.frontend_path }, Show.solution.issue.title), '"'),
             p("When you are finished with your solution, fill in the form below so that we can track its progress."),
 
             form({ 'class': 'fancy', action: submit_solution },
@@ -137,7 +139,7 @@ with (scope('Show','Solution')) {
 
     BountySource.destroy_solution(Show.solution.id, function(response) {
       if (response.meta.success) {
-        set_route(Show.solution.issue.frontend_url);
+        set_route(Show.solution.issue.frontend_path);
       } else {
         render({ into: Show.submit_solution_errors_container }, errors_message(response.data.error));
       }

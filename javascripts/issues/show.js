@@ -13,6 +13,8 @@ with (scope('Show', 'Issue')) {
       } else {
         var issue = response.data||{};
 
+        console.log(issue);
+
         App.update_facebook_like_button({
           name:         issue.tracker.name+": "+issue.title,
           caption:      issue.title,
@@ -66,10 +68,8 @@ with (scope('Show', 'Issue')) {
           ),
 
           Columns.side(
-            section(
-              bounty_box(issue),
-              DeveloperBox.create(issue)
-            )
+            bounty_box(issue),
+            logged_in() && DeveloperBox.create(issue)
           )
         );
       }
