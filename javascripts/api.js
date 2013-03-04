@@ -1,6 +1,7 @@
 with (scope('BountySource')) {
 
-  define('api_host', 'https://api.bountysource.com/');
+  // define('api_host', 'https://api.bountysource.com/');
+  define('api_host', 'https://api.bountysource.dev/');
   define('www_host', document.location.href.split('#')[0]);
 
   // parse arguments: url, [http_method], [params], [callback]
@@ -14,10 +15,10 @@ with (scope('BountySource')) {
       callback:  typeof(args[0]) == 'function' ? args.shift() : function(){},
       non_auth_callback:  typeof(args[0]) == 'function' ? args.shift() : function(){}
     }
-    
+
     // add in our access token
     options.params.access_token = Storage.get('access_token');
-    
+
     // reload the page if they're not authorized
     var callback = options.callback;
     options.callback = function(response) {
@@ -39,7 +40,7 @@ with (scope('BountySource')) {
         callback.call(this, response);
       }
     };
-    
+
     JSONP.get(options);
   });
 
@@ -269,4 +270,57 @@ with (scope('BountySource')) {
   define('get_friends_activity', function(callback) {
     api('/user/notifications/friends', callback);
   });
+
+  define('try_create_issue', function(url, callback) {
+    // api('/issues/try_create', callback);
+    var response = {}; // mock the data for now
+    response.data = {}
+    // response.data.issue = {
+    //   bounty_total: 100,
+    //   number: 1,
+    //   closed: false,
+    //   code: false,
+    //   repository: {
+    //     full_name: "thailehuy/hblog",
+    //     url: "http://www.github.com/thailehuy/hblog/",
+    //     type: "Github::Repository"
+    //   }
+    // }
+
+    response.data.repository = {
+      full_name: "thailehuy/hblog",
+      url: "http://www.github.com/thailehuy/hblog/",
+      type: "Github::Repository"
+    }
+    callback(response);
+  });
+
+  define('create_issue', function(data, success_callback, error_callback) {
+    var callback = function(response) {
+      if(response.meta.success) {
+        success_callback(response);
+      } else {
+        error_callback(response);
+      }
+    }
+    // api('/issues', 'POST', data, callback);
+
+    var response = {}; // mock the data for now
+    response.meta = {};
+    response.meta.success = true;
+    response.data = {}
+    response.data.issue = {
+      bounty_total: 100,
+      number: 1,
+      closed: false,
+      code: false,
+      frontend_url: '#repos/thailehuy/hblog/issues/1',
+      repository: {
+        full_name: "thailehuy/hblog",
+        url: "http://www.github.com/thailehuy/hblog/",
+        type: "Github::Repository"
+      }
+    }
+    callback(response);
+  })
 }
