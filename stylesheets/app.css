@@ -339,3 +339,30 @@ input.autosized {
 
 #forkme { display: none; position: absolute; right: 0; top: 64px; }
 @media screen and (min-width: 1250px) { #forkme { display: block; } }
+
+
+#split-wrapper {}
+#split-main {
+  z-index: 1;
+  display: inline-block;
+  width: 660px;
+  margin-right: 20px;
+
+  -webkit-transition: ease-in 100ms;
+  -moz-transition:    ease-in 100ms;
+  -o-transition:      ease-in 100ms;
+  transition:         ease-in 100ms;
+}
+#split-main.expanded {
+  width: 955px;
+}
+#split-side {
+  display: inline-block;
+  vertical-align: top;
+  width: 275px;
+  z-index: 0;
+}
+#split-side.collapsed {
+  display: none;
+}
+

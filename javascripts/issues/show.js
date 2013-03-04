@@ -1,67 +1,69 @@
-with (scope('Issue', 'App')) {
+with (scope('Show', 'Issue')) {
 
-  route('#issues/:issue_id', function(issue_id) {
-    var target_div = div('Loading...');
+  route('#repos/:login/:repository/issues/:issue_number', function(login, repository, issue_number) {
+    Show.errors_div = div();
+    Show.target_div = div('Loading...');
 
-    render(target_div);
+    render(
+      breadcrumbs(
+        a({ href: '#' }, 'Home'),
+        a({ href: '#repos/' + login + '/' + repository }, login + '/' + repository),
+        a({ href: '#repos/' + login + '/' + repository + '/issues' }, 'Issues'),
+        '#' + issue_number
+      ),
 
-    BountySource.get_issue(issue_id, function(response) {
-      var issue = response.data||{};
+      Show.target_div
+    );
 
-      App.update_facebook_like_button({
-        name:         issue.tracker.name+": "+issue.title,
-        caption:      issue.title,
-        description:  "BountySource is the funding platform for open-source software. Create a bounty to help get this issue resolved, or submit a pull request to earn the bounty yourself!",
-        picture:      issue.tracker.image_url
-      });
+    BountySource.get_issue(login, repository, issue_number, function(response) {
+      if (response.meta.success) {
+        Show.issue = response.data;
 
-      render({ into: target_div },
+        var issue = Show.issue;
 
-        breadcrumbs(
-          a({ href: '#' }, 'Home'),
-          a({ href: '#trackers/' + issue.tracker.slug }, issue.tracker.name),
-          //a({ href: '#trackers/' + issue.tracker.slug + '/issues' }, 'Issues'),
-          abbreviated_text(issue.title,40)
-        ),
+        render({ into: Show.target_div },
+          Split.create(
+            Split.main(
+              //used to render messages into
+              Show.errors_div,
 
-        div({ 'class': 'split-main' },
+              // title of issue, with closed or open notification.
+              // if issue is closed, add line-through
+              h1({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656; margin: 10px;' },
+                span({ style: issue.closed ? 'text-decoration: line-through;' : '' }, '#' + issue.number + ': ' + issue.title),
+                div({ style: 'padding-left: 20px; display: inline-block;' }, Issue.status_element(issue))
+              ),
 
-          // used to render messages into
-          messages(),
+              div({ style: 'margin-bottom: 20px;' },
+                curry(DeveloperBox.solution_status_for_issue, issue)
+              ),
 
-          // title of issue, with closed or open notification.
-          // if issue is closed, add line-through
-          h1({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656' }, 
-            span({ style: !issue.can_add_bounty ? 'text-decoration: line-through;' : '' }, (issue.number  ? '#' + issue.number + ': ' : '') + issue.title),
-            div({ style: 'padding-left: 20px; display: inline-block;' }, Issue.status_element(issue))
-          ),
+              github_user_html_box({ user: issue.user, body_html: issue.body, created_at: issue.remote_created_at }),
 
-          issue.body_html && github_user_html_box(issue),
+              div({ style: 'margin: 25px 0;' },
+                div({ style: 'display: inline-block; vertical-align: middle; margin-right: 10px;' }, 'For more information, or to comment:'),
+                a({ 'class': 'btn-auth btn-github', style: 'display: inline-block; vertical-align: middle;', href: issue.url, target: '_blank' }, 'View Issue on GitHub')
+              ),
 
-          div({ style: 'margin: 25px 0;' },
-            div({ style: 'display: inline-block; vertical-align: middle; margin-right: 10px;' }, 'For more information, or to comment:'),
-            a({ 'class': 'btn-auth btn-github', style: 'display: inline-block; vertical-align: middle;', href: issue.url, target: '_blank' }, 'View Issue on GitHub')
-          ),
+              issue.comments.length > 0 && div(
+                h2({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656' }, 'Comments'),
+                issue.comments.map(github_user_html_box)
+              )
+            ),
 
-          issue.comments && issue.comments.length > 0 && div(
-            h2({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656' }, 'Comments'),
-            issue.comments.map(github_user_html_box)
+            Split.side(
+              issue.can_add_bounty && bounty_box(issue),
+              issue.can_add_bounty && DeveloperBox.create(issue)
+            )
           )
-        ),
-
-        div({ 'class': 'split-side'},
-          // TODO: add more here after an issue has been closed
-          section(
-            issue.can_add_bounty && bounty_box(issue),
-            issue.can_add_bounty && developer_box(issue)
-          )
-        ),
-
-        div({ 'class': 'split-end' })
-      );
+        )
+      } else {
+        render({ into: Show.target_div }, '');
+        render({ into: Show.errors_div }, error_message(response.data.errors));
+      }
     });
   });
-  
+
   define('github_user_html_box', function(options) {
     return div({ style: 'margin-bottom: -1px' },
       options.author_image_url && img({ src: options.author_image_url, style: 'width: 50px; height: 50px; float: left' }),

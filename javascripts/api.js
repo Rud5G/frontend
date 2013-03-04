@@ -235,22 +235,6 @@ with (scope('BountySource')) {
     api('/users/'+profile_id, callback);
   });
 
-  define('get_pull_requests', function(login, repository, github_user_login, callback) {
-    api('/github/repos/'+login+'/'+repository+'/pulls/'+github_user_login, callback);
-  });
-
-  define('create_solution', function(issue_id, pull_request_number, callback) {
-    api('/issues/github/repos/'+login+'/'+repository+'/issues/'+issue_number+'/solutions', 'POST', { pull_request_number: pull_request_number }, callback);
-  });
-
-  define('get_solutions', function(callback) {
-    api('/user/solutions', callback);
-  });
-
-  define('get_solution', function(solution_id, callback) {
-    api('/user/solutions/'+solution_id, callback);
-  });
-
   define('get_rewards', function(fundraiser_id, callback) {
     api('/user/fundraisers/'+fundraiser_id+'/rewards', 'GET', data, callback);
   });
@@ -280,6 +264,38 @@ with (scope('BountySource')) {
         callback(response);
       });
     }
+    api('/user/notifications/friends', callback);
+  });
+
+  /*
+  * Solutions
+  * */
+  define('get_solutions', function(callback) {
+    api('/user/solutions', callback);
+  });
+
+  define('get_solution', function(id, callback) {
+    api('/user/solutions/'+id, callback);
+  });
+
+  define('create_solution', function(issue_id, callback) {
+    api('/user/solutions', 'POST', { issue_id: issue_id }, callback);
+  });
+
+  define('update_solution', function(id, data, callback) {
+    api('/user/solutions/'+id, 'PUT', data, callback);
+  });
+
+  define('destroy_solution', function(id, data, callback) {
+    api('/user/solutions/'+id, 'DELETE', data, callback);
+  });
+
+  define('submit_solution', function(id, callback) {
+    api('/user/solutions/'+id+'/submit', 'POST', callback);
+  });
+
+  define('solutions_for_issue', function(issue_id, callback) {
+    api('/issues/'+issue_id+'/solutions', callback);
   });
 
   define('try_create_issue', function(url, callback) {
