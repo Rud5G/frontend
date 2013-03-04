@@ -101,7 +101,7 @@ with (scope('Show', 'Fundraiser')) {
         section({ id: 'fundraiser-stats', style: 'background: #eee; padding: 10px; margin: 10px 0; border-radius: 3px;' },
           ul({ style: 'list-style-type: none; padding: 0;' },
             li({ style: 'margin: 20px auto;' },
-              span({ style: 'font-size: 45px; display: inline-block;' }, fundraiser.backers.length+''), br(), span({ style: 'margin-left: 5px; margin-top: 12px; display: inline-block;' }, 'backer' + (fundraiser.backers.length == 1 ? '' : 's'))
+              span({ style: 'font-size: 45px; display: inline-block;' }, fundraiser.pledges.length+''), br(), span({ style: 'margin-left: 5px; margin-top: 12px; display: inline-block;' }, 'backer' + (fundraiser.pledges.length == 1 ? '' : 's'))
             ),
 
             li({ style: 'margin: 20px auto;' },
