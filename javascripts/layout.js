@@ -493,32 +493,41 @@ with (scope('App')) {
   });
 }
 
-with (scope('Split')) {
+with (scope('Columns')) {
   initializer(function() {
-    Split._main     = div({ id: 'split-main' });
-    Split._side     = div({ id: 'split-side' });
-    Split._wrapper  = div({ id: 'split-wrapper' }, Split._main, Split._side);
+    Columns._options  = { show_side: true };
+    Columns._main     = div({ id: 'split-main' });
+    Columns._side     = div({ id: 'split-side' });
+    Columns._wrapper  = div({ id: 'split-wrapper' }, Columns._main, Columns._side);
   });
 
-  define('create', function() {
-    return Split._wrapper;
+  define('create', function(options) {
+    options = options || {};
+
+    // show side by default
+    if (options.show_side) Columns._options.show_side = options.show_side;
+
+    return Columns._wrapper;
   });
 
   define('main', function() {
-    render({ into: Split._main }, arguments);
+    render({ into: Columns._main }, arguments);
+
+    // hide the side by default
+    if (!Columns._options.show_side) hide_side();
   });
 
   define('side', function() {
-    render({ into: Split._side }, arguments);
+    render({ into: Columns._side }, arguments);
   });
 
   define('show_side', function() {
-    remove_class(Split._main, 'expanded');
-    remove_class(Split._side, 'collapsed');
+    remove_class(Columns._main, 'expanded');
+    remove_class(Columns._side, 'collapsed');
   });
 
   define('hide_side', function() {
-    add_class(Split._main, 'expanded');
-    add_class(Split._side, 'collapsed');
+    add_class(Columns._main, 'expanded');
+    add_class(Columns._side, 'collapsed');
   });
 }
