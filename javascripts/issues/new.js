@@ -1,26 +1,24 @@
 with (scope('Issue', 'App')) {
 
-  route('#repos/:login/:repository/issues/new', function(login, repository) {
+  route('#trackers/:tracker_id/issues/new', function(tracker_id) {
     var target_div = div('Loading...');
     var params = get_params();
 
-    render(
-      breadcrumbs(
-        a({ href: '#' }, 'Home'),
-        a({ href: '#repos/' + login + '/' + repository }, login + '/' + repository),
-        a({ href: '#repos/' + login + '/' + repository + '/issues' }, 'Issues'),
-        'New'
-      ),
+    render(target_div);
 
-      target_div
-    );
-
-    BountySource.get_repository_overview(login, repository, function(response) {
+    BountySource.get_repository_overview(tracker_id, function(response) {
       if (!response.meta.success) return render({ into: target_div }, response.data.error || response.data.message);
 
       var repo = response.data;
 
       render({into: target_div},
+        breadcrumbs(
+          a({ href: '#' }, 'Home'),
+          a({ href: repo.frontend_path }, repo.name),
+          a({ href: repo.frontend_path + '/issues' }, 'Issues'),
+          'New'
+        ),
+
         section({ style: 'padding: 21px' },
           form({ action: curry(add_issue, repo) },
 
@@ -36,7 +34,7 @@ with (scope('Issue', 'App')) {
               text({ name: 'number', id: 'number-input', value: '', placeholder: 'Issue Number' })
             ),
 
-            repo.type == "Generic::Repository" && div({ 'class': 'url' },
+            div({ 'class': 'url' },
               label({ 'for': 'url-input' }, 'URL'),
               text({ name: 'url', id: 'url-input', value: '', placeholder: 'Issue URL' })
             ),

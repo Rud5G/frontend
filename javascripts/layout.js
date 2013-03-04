@@ -27,7 +27,7 @@ with (scope('App')) {
 
       render({ into: user_nav },
         a({ href: '#account', id: 'user_nav_a' },
-          img({ id: 'user_nav_avatar', src: user.avatar_url }),
+          img({ id: 'user_nav_avatar', src: user.image_url }),
           span({ id: 'user_nav_name' },
             user.display_name,
             (user.account.balance > 0) && span({ style: 'margin-left: 5px;' }, ' (' + money(user.account.balance, show_pennies) + ')')
@@ -154,20 +154,24 @@ with (scope('App')) {
 
   define('notification', function(object) {
     var message = "did something awesome!";
+    var frontend_path;
     if (object.type == 'bounty') {
       message = 'placed a ' + money(object.amount) + ' bounty on ' + object.issue.title;
+      frontend_path = object.issue.frontend_path;
     } else if (object.type == 'pledge') {
       message = 'pledged ' + money(object.amount) + ' to ' + object.fundraiser.title;
+      frontend_path = object.fundraiser.frontend_path;
     } else if (object.type == 'fundraiser') {
       message = 'created a Fundraiser: '+object.title;
+      frontend_path = object.frontend_path;
     }
 
-    return div({ 'class': 'notification-message', onClick: curry(set_route, object.href) },
-      a({ href: object.person.profile_url },
-        img({ 'class': 'notification-user', src: object.person.avatar_url })
+    return div({ 'class': 'notification-message', onClick: curry(set_route, frontend_path) },
+      a({ href: object.person.frontend_path },
+        img({ 'class': 'notification-user', src: object.person.image_url })
       ),
       div({ 'class': 'notification-content' },
-        a({ href: object.person.profile_url, style: 'font-size: 12px;' }, span(object.person.display_name)), span(' ', message)
+        a({ href: object.person.frontend_path, style: 'font-size: 12px;' }, span(object.person.display_name)), span(' ', message)
       )
     )
   });
@@ -309,8 +313,9 @@ with (scope('App')) {
 
   // abbreviate a body of text
   define('abbreviated_text', function(text, max_length) {
+    text = text || '';
     max_length = max_length || 100;
-    return (text.length > max_length) ? (text.substr(0,max_length) + '...') : text;
+    return (text.length > max_length) ? (text.substr(0,max_length-3) + '...') : text;
   });
 
   // a readonly input with a width that exactly fits the text.

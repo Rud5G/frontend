@@ -42,7 +42,7 @@ with (scope('Home', 'App')) {
 
           (recent_people.people||[]).map(function(person) {
             return div({ 'class': 'round-avatar' },
-              a({ href: person.profile_url }, img({ src: person.avatar_url }))
+              a({ href: person.frontend_path }, img({ src: person.image_url }))
             );
           }),
 
@@ -188,7 +188,7 @@ with (scope('Home', 'App')) {
       hide('card-loader-div');
 
       // if we didn't get a full response, give up
-      var card_count = response.data.fundraisers.length + response.data.repositories.length + response.data.issues.length;
+      var card_count = response.data.fundraisers.length + response.data.issues.length;
       if (card_count >= 50) page_state.can_load_more_cards = true;
     });
   });

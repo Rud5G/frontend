@@ -1,26 +1,23 @@
 with (scope('Bounty', 'App')) {
   before_filter(require_login);
 
-  route('#repos/:login/:repository/issues/:issue_number/bounties/new', function(login, repository, issue_number) {
+  route('#issues/:issue_id/bounties/new', function(issue_id) {
     var target_div = div('Loading...');
+    render(target_div);
 
-    render(
-      breadcrumbs(
-        a({ href: '#' }, 'Home'),
-        a({ href: '#repos/' + login + '/' + repository }, login + '/' + repository),
-        a({ href: '#repos/' + login + '/' + repository + '/issues' }, 'Issues'),
-        '#' + issue_number,
-        'Bounties'
-      ),
-
-      target_div
-    );
-    BountySource.get_issue(login, repository, issue_number, function(response) {
+    BountySource.get_issue(issue_id, function(response) {
       var issue = response.data||{};
 
       render({ into: target_div },
+        breadcrumbs(
+          a({ href: '#' }, 'Home'),
+          a({ href: '#trackers/' + issue.tracker.id }, issue.tracker.name),
+          a({ href: '#trackers/' + issue.tracker.id + '/issues' }, 'Issues'),
+          '#' + issue_number,
+          'Bounties'
+        ),
 
-          div({ },
+        div({ },
             !issue.closed && !issue.code && section(
               bounty_box(issue)
             )

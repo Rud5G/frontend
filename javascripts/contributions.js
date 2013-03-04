@@ -29,8 +29,7 @@ with (scope('Contributions', 'App')) {
               tr(
                 th(),
                 th('Project'),
-                th({ style: 'width: 60px;' }, 'Issue'),
-                th({ style: 'width: 200px;' }),
+                th({ style: 'width: 260px;' }, 'Issue'),
                 th({ style: 'text-align: center;' }, 'Issue Status'),
                 th('Bounty Amount'),
                 th('Date')
@@ -39,11 +38,10 @@ with (scope('Contributions', 'App')) {
               (user_info.bounties).map(function(bounty) {
                 return tr({ style: 'height: 75px;' },
                   td({ style: 'width: 60px; text-align: center; vertical-align: middle;' },
-                    img({ src: bounty.repository.owner.avatar_url, style: 'width: 50px;' })
+                    img({ src: bounty.issue.tracker.image_url, style: 'width: 50px;' })
                   ),
-                  td(a({ href: Repository.get_href(bounty.issue.repository) }, bounty.repository.full_name)),
-                  td(a({ href: Issue.get_href(bounty.issue) }, '#'+bounty.issue.number )),
-                  td({ style: 'color: #888' }, bounty.issue.title),
+                  td(a({ href: Repository.get_href(bounty.issue.tracker) }, bounty.issue.tracker.name)),
+                  td(a({ href: Issue.get_href(bounty.issue) }, bounty.issue.title )),
                   td({ style: 'text-align: center;' }, Issue.status_element(bounty.issue)),
                   td(money(bounty.amount)),
                   td(formatted_date(bounty.created_at))
@@ -67,7 +65,7 @@ with (scope('Contributions', 'App')) {
                   td({ style: 'width: 60px; text-align: center; vertical-align: middle;' },
                     img({ src: pledge.fundraiser.image_url, style: 'width: 50px;' })
                   ),
-                  td(a({ href: pledge.fundraiser.url }, pledge.fundraiser.title)),
+                  td(a({ href: pledge.fundraiser.frontend_path }, pledge.fundraiser.title)),
                   td(money(pledge.amount)),
                   td(formatted_date(pledge.created_at))
                 )

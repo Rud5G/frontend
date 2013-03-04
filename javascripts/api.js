@@ -129,16 +129,20 @@ with (scope('BountySource')) {
     api('/github/issues/search/'+login+'/'+repository+'/'+term, callback);
   });
 
-  define('get_repository', function(login, repository, callback) {
-    api('/github/repos/'+login+'/'+repository, callback);
+//  define('get_repository', function(login, repository, callback) {
+//    api('/github/repos/'+login+'/'+repository, callback);
+//  });
+
+  define('get_tracker', function(tracker_id, callback) {
+    api('/trackers/'+tracker_id, callback);
   });
 
-  define('get_issues', function(login, repository, callback) {
-    api('/github/repos/'+login+'/'+repository+'/issues', callback);
+  define('get_issues', function(tracker_id, callback) {
+    api('/trackers/'+tracker_id+'/issues', callback);
   });
 
-  define('get_issue', function(login, repository, issue_number, callback) {
-    api('/github/repos/'+login+'/'+repository+'/issues/'+issue_number, callback);
+  define('get_issue', function(issue_id, callback) {
+    api('/issues/'+issue_id, callback);
   });
 
   define('overview', function(callback) {
@@ -167,8 +171,8 @@ with (scope('BountySource')) {
     api('/github/user/repos/', callback);
   });
 
-  define('get_repository_overview', function(login, repository, callback) {
-    api('/github/repos/'+login+'/'+repository+'/overview', callback);
+  define('get_repository_overview', function(tracker_id, callback) {
+    api('/trackers/'+tracker_id+'/overview', callback);
   });
 
   define('create_address', function(data, callback) {
@@ -235,8 +239,8 @@ with (scope('BountySource')) {
     api('/github/repos/'+login+'/'+repository+'/pulls/'+github_user_login, callback);
   });
 
-  define('create_solution', function(login, repository, issue_number, pull_request_number, callback) {
-    api('/github/repos/'+login+'/'+repository+'/issues/'+issue_number+'/solutions', 'POST', { pull_request_number: pull_request_number }, callback);
+  define('create_solution', function(issue_id, pull_request_number, callback) {
+    api('/issues/github/repos/'+login+'/'+repository+'/issues/'+issue_number+'/solutions', 'POST', { pull_request_number: pull_request_number }, callback);
   });
 
   define('get_solutions', function(callback) {
@@ -268,7 +272,14 @@ with (scope('BountySource')) {
   });
 
   define('get_friends_activity', function(callback) {
-    api('/user/notifications/friends', callback);
+    if (scope.__friend_activity) {
+      setTimeout(curry(callback, scope.__friend_activity), 0);
+    } else {
+      api('/user/notifications/friends', function(response) {
+        scope.__friend_activity = response;
+        callback(response);
+      });
+    }
   });
 
   define('try_create_issue', function(url, callback) {

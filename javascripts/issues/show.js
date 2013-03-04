@@ -1,30 +1,29 @@
 with (scope('Issue', 'App')) {
 
-  route('#repos/:login/:repository/issues/:issue_number', function(login, repository, issue_number) {
+  route('#issues/:issue_id', function(issue_id) {
     var target_div = div('Loading...');
 
-    render(
-      breadcrumbs(
-        a({ href: '#' }, 'Home'),
-        a({ href: '#repos/' + login + '/' + repository }, login + '/' + repository),
-        a({ href: '#repos/' + login + '/' + repository + '/issues' }, 'Issues'),
-        '#' + issue_number
-      ),
+    render(target_div);
 
-      target_div
-    );
-
-    BountySource.get_issue(login, repository, issue_number, function(response) {
+    BountySource.get_issue(issue_id, function(response) {
       var issue = response.data||{};
 
       App.update_facebook_like_button({
-        name:         issue.repository.display_name+": Issue #"+issue.number,
+        name:         issue.tracker.name+": "+issue.title,
         caption:      issue.title,
         description:  "BountySource is the funding platform for open-source software. Create a bounty to help get this issue resolved, or submit a pull request to earn the bounty yourself!",
-        picture:      issue.repository.owner.avatar_url
+        picture:      issue.tracker.image_url
       });
 
       render({ into: target_div },
+
+        breadcrumbs(
+          a({ href: '#' }, 'Home'),
+          a({ href: '#trackers/' + issue.tracker.slug }, issue.tracker.name),
+          //a({ href: '#trackers/' + issue.tracker.slug + '/issues' }, 'Issues'),
+          abbreviated_text(issue.title,40)
+        ),
+
         div({ 'class': 'split-main' },
 
           // used to render messages into
@@ -33,27 +32,28 @@ with (scope('Issue', 'App')) {
           // title of issue, with closed or open notification.
           // if issue is closed, add line-through
           h1({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656' }, 
-            span({ style: issue.closed ? 'text-decoration: line-through;' : '' }, '#' + issue.number + ': ' + issue.title),
+            span({ style: !issue.can_add_bounty ? 'text-decoration: line-through;' : '' }, (issue.number  ? '#' + issue.number + ': ' : '') + issue.title),
             div({ style: 'padding-left: 20px; display: inline-block;' }, Issue.status_element(issue))
           ),
 
-          github_user_html_box({ user: issue.user, body_html: issue.body, created_at: issue.remote_created_at }),
+          issue.body_html && github_user_html_box(issue),
 
           div({ style: 'margin: 25px 0;' },
             div({ style: 'display: inline-block; vertical-align: middle; margin-right: 10px;' }, 'For more information, or to comment:'),
             a({ 'class': 'btn-auth btn-github', style: 'display: inline-block; vertical-align: middle;', href: issue.url, target: '_blank' }, 'View Issue on GitHub')
           ),
 
-          issue.comments.length > 0 && div(
+          issue.comments && issue.comments.length > 0 && div(
             h2({ style: 'font-size: 26px; line-height: 30px; font-weight: normal; color: #565656' }, 'Comments'),
             issue.comments.map(github_user_html_box)
           )
         ),
 
         div({ 'class': 'split-side'},
-          !issue.closed && !issue.code && section(
-            bounty_box(issue),
-            developer_box(issue)
+          // TODO: add more here after an issue has been closed
+          section(
+            issue.can_add_bounty && bounty_box(issue),
+            issue.can_add_bounty && developer_box(issue)
           )
         ),
 
@@ -63,14 +63,12 @@ with (scope('Issue', 'App')) {
   });
   
   define('github_user_html_box', function(options) {
-    var user = options.user;
-
     return div({ style: 'margin-bottom: -1px' },
-      img({ src: user.avatar_url, style: 'width: 50px; height: 50px; float: left' }),
+      options.author_image_url && img({ src: options.author_image_url, style: 'width: 50px; height: 50px; float: left' }),
 
       div({ style: 'margin-left: 70px; background: #f7f7f7; border-top: 1px solid #e3e3e3; border-bottom: 1px solid #e3e3e3; overflow: auto; padding: 10px;' },
-        div({ style: 'color: #b4b4b4; margin-bottom: 6px' }, user.login, ' commented ', time_ago_in_words(options.created_at), ' ago:'),
-      
+        div({ style: 'color: #b4b4b4; margin-bottom: 6px' }, options.author_name, ' commented ', time_ago_in_words(options.created_at), ' ago:'),
+
         div({ 'class': 'gfm', html: options.body_html })
       )
     );
@@ -107,10 +105,10 @@ with (scope('Issue', 'App')) {
     var payment_data = {
       amount: form_data.amount,
       payment_method: form_data.payment_method,
-      item_number: 'github/' + issue.repository.full_name + '/issues/' + issue.number,
-      success_url: window.location.href.split('#')[0] + '#repos/' + issue.repository.full_name + '/issues/' + issue.number + '/bounties/:item_id/receipt',
-      cancel_url: window.location.href.split('#')[0] + '#repos/' + issue.repository.full_name + '/issues/' + issue.number,
-      postauth_url: window.location.href.split('#')[0] + '#repos/' + issue.repository.full_name + '/issues/' + issue.number + '?payment_method='+form_data.payment_method+'&amount='+form_data.amount
+      item_number: 'issues/' + issue.id,
+      success_url: window.location.href.split('#')[0] + issue.frontend_path + '/bounties/:item_id/receipt',
+      cancel_url: window.location.href.split('#')[0] + issue.frontend_path,
+      postauth_url: window.location.href.split('#')[0] + issue.frontend_path + '?payment_method='+form_data.payment_method+'&amount='+form_data.amount
     };
 
     BountySource.make_payment(payment_data, function(errors) {
@@ -151,7 +149,7 @@ with (scope('Issue', 'App')) {
               } else {
                 render({ into: developer_div },
 
-                  form({ action: curry(create_solution, issue.repository.owner.login, issue.repository.name, issue.number), style: 'text-align: center;' },
+                  form({ action: curry(create_solution, issue.id), style: 'text-align: center;' },
                     div({ id: 'developer-box-messages' }),
 
                     span({ style: 'margin-bottom: 10px; display: block;' }, "Your pull requests for ", a({ href: 'https://github.com/'+issue.repository.full_name+'/pulls', target: '_blank' }, issue.repository.full_name), ':'),
