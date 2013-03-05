@@ -354,3 +354,17 @@ input.autosized {
 }
 
 .range-with-input { display: inline-block; }
+
+#solution-payout-info fieldset { margin: 15px 0; }
+#solution-payout-info fieldset:first-of-type { margin: 0 0 15px 0; }
+#solution-payout-info fieldset:last-of-type { margin: 15px 0 0 0; }
+#solution-payout-info #developer-cut {  }
+#solution-payout-info label {
+  display: inline-block;
+  width: 130px;
+  font-size: 14px;
+  text-align: right;
+  margin-right: 10px;
+}
+
+.dollar-sign { font-size: 25px; display: inline-block; vertical-align: middle; margin-right: 5px; }
