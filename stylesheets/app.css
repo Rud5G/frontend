@@ -352,3 +352,5 @@ input.autosized {
 .solution-row:hover {
   background: #FFFFE4;
 }
+
+.range-with-input { display: inline-block; }
