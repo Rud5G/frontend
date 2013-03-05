@@ -20,7 +20,7 @@ with (scope('Home', 'App')) {
 
         div({ style: "background: #f2f3f2; border: 10px solid white; box-shadow: 0 0 5px #ccc8be; margin-bottom: 15px"},
           h1('The funding platform for open-source software.'),
-          h2('Improve the open-source projects you use by creating a Bounty on an issue.'),
+          h2('Improve the open-source projects you love by creating and collecting bounties!'),
           get_started_actions(),
           div({ style: 'clear: both; border-top: 2px solid #e0ab45; margin: 10px' }),
           recent_people_div(),
@@ -85,26 +85,10 @@ with (scope('Home', 'App')) {
 
   define('get_started_actions', function() {
     return div({ style: 'text-align: center; padding: 0 0 20px 0;' },
-
-//      span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic' }, 'Get started...'),
-//
-//      button({ 'class': 'blue', style: 'width: 200px', onClick: curry(set_route, '#bounties') }, 'Browse All Bounties'),
-//
-//      span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic; padding: 0 25px'}, 'or'),
-
       form({ style: 'display: inline', action: Search.perform },
         text({ name: 'query', style: 'width: 300px; line-height: 24px; padding: 0 15px; height: 40px; border: 1px solid #9dce5c;', placeholder: 'Issue URL, Project Name, Search Terms, etc.' }),
         submit({ value: 'Search', 'class': 'green', style: 'width: 80px; margin-left: 3px;' })
       )
-//      ,
-//      div({style: 'padding-top: 15px'},
-//        span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic; padding: 0 25px'}, 'or'),
-//
-//        form({ style: 'display: inline', action: function(form_data) { set_route('#issues/create?url='+escape(form_data.url)) } },
-//          text({ name: 'url', style: 'width: 250px; line-height: 24px; padding: 0 15px; height: 40px; border: 1px solid #9dce5c;', placeholder: 'Issue URL' }),
-//          submit({ value: 'Create New Issue', 'class': 'green', style: 'width: 150px; margin-left: 3px;' })
-//        )
-//      )
     );
   });
 

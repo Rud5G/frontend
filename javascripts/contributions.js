@@ -77,58 +77,6 @@ with (scope('Contributions', 'App')) {
     });
   });
 
-  route('#issues/:issue_id/bounties/:bounty_id/receipt', function(login, repository, issue_number, bounty_id) {
-    // if the pledge ID was not subbed into the URL, just go view the issue.
-    // This will happen on Paypal cancel.
-    if (/:bounty_id/.test(bounty_id)) return set_route('#repos/'+login+'/'+repository+'/issues/'+issue_number);
-
-    var target_div = div('Loading...');
-
-    render(
-      breadcrumbs(
-        a({ href: '#' }, 'Home'),
-        a({ href: '#repos/' + login + '/' + repository }, login + '/' + repository),
-        a({ href: '#repos/' + login + '/' + repository + '/issues' }, 'Issues'),
-        a({ href: '#repos/' + login + '/' + repository + '/issues/' + issue_number }, '#' + issue_number),
-        'Bounty Receipt'
-      ),
-      target_div
-    );
-
-    BountySource.get_bounty(bounty_id, function(response) {
-      var bounty = response.data;
-
-      render({ into: target_div },
-        div({ style: 'text-align: center;' },
-          h2(money(bounty.amount), " Bounty Placed"),
-          h3(bounty.issue.repository.display_name),
-          h3('Issue #', bounty.issue.number, ' - ', bounty.issue.title),
-
-          div(
-            Facebook.create_share_button({
-              link:         BountySource.www_host+Issue.get_href(bounty.issue),
-              name:         bounty.repository.display_name,
-              caption:      money(bounty.amount)+' bounty placed on issue #'+bounty.issue.number+' - '+bounty.issue.title,
-              description:  "BountySource is the funding platform for open-source software. Create a bounty to help get this issue resolved, or submit a pull request to earn the bounty yourself!",
-              picture:      bounty.issue.repository.owner.avatar_url || ''
-            }, a({ 'class': 'btn-auth btn-facebook large', style: 'margin-right: 10px;' }, 'Share')),
-
-            Twitter.create_share_button({
-              url:  BountySource.www_host+Issue.get_href(bounty.issue),
-              text: money(bounty.amount)+" bounty placed",
-              via:  'BountySource'
-            }, a({ 'class': 'btn-auth btn-twitter large', style: 'margin-right: 10px;' }, 'Tweet')),
-
-            // TODO fix it! --- CAB
-            false && Github.issue_comment_form(bounty.issue, {
-              default_text: "I placed a " + money(bounty.amount) + " bounty on this issue using BountySource. The bounty total goes to the person whose pull request gets accepted. Add to or claim the bounty here: " + BountySource.www_host+Issue.get_href(bounty.issue)
-            })
-          )
-        )
-      );
-    });
-  });
-
   route('#fundraisers/:fundraiser_id/pledges/:pledge_id/receipt', function(fundraiser_id, pledge_id) {
     // if the pledge ID was not subbed into the URL, just go view the issue.
     // This will happen on Paypal cancel.
