@@ -18,26 +18,27 @@ with (scope('Show','Solution')) {
 
     BountySource.get_solution(id, function(response) {
       if (response.meta.success) {
-        Show.solution = response.data;
+        var solution = response.data;
+
+        // cache the solution
+        Show.solution = solution;
 
         // fill in the breadcrumbs
         render({ into: breadrcrumbs_div },
           breadcrumbs(
             a({ href: '#' }, 'Home'),
-            a({ href: Show.solution.issue.tracker.frontend_path }, Show.solution.issue.tracker.name ),
-            a({ href: Show.solution.issue.tracker.frontend_path+'/issues' }, 'Issues'),
-            a({ href: Show.solution.issue.frontend_path }, '#'+Show.solution.issue.number),
-            'Solution'
+            a({ href: '#solutions' }, 'My Solutions'),
+            abbreviated_text(solution.issue.title, 70)
           )
         );
 
-        if (Show.solution.accepted) {
+        if (solution.accepted) {
           render({ into: Show.target_div },
             h2('Solution Accepted!'),
             p('Congrats, your solution has been accepted, and you won the bounty!'),
             a({ 'class': 'green', style: 'display: inline-block;' }, 'Collect Thy Booty')
           );
-        } else if (Show.solution.submitted) {
+        } else if (solution.submitted) {
           render({ into: Show.target_div },
             h2('Solution Submitted!'),
             p("Awesome, we have received your proposed solution for this issue, and will keep track of its status."),
@@ -84,7 +85,7 @@ with (scope('Show','Solution')) {
 
           render({ into: Show.target_div },
             h2('Started a Solution'),
-            p("You have started working on a solution to \"", a({ href: Show.solution.issue.frontend_path }, Show.solution.issue.title), '"'),
+            p("You have started working on a solution to \"", a({ href: solution.issue.frontend_path }, solution.issue.title), '"'),
             p("When you are finished with your solution, fill in the form below so that we can track its progress."),
 
             form({ 'class': 'fancy', action: submit_solution },
