@@ -20,8 +20,6 @@ with (scope('Show','Solution')) {
       if (response.meta.success) {
         Show.solution = response.data;
 
-        console.log(response.data);
-
         // fill in the breadcrumbs
         render({ into: breadrcrumbs_div },
           breadcrumbs(
