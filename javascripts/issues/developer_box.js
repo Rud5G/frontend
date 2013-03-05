@@ -40,7 +40,7 @@ with (scope('DeveloperBox','Issue')) {
         if (response.meta.success) {
           var my_solution;
           for (var i=0; i<response.data.length; i++) {
-            if (response.data[i].issue.id) {
+            if (response.data[i].issue.id == DeveloperBox.issue.id) {
               my_solution = response.data[i];
               break;
             }

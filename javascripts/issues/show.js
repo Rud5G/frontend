@@ -13,8 +13,6 @@ with (scope('Show', 'Issue')) {
       } else {
         var issue = response.data||{};
 
-        console.log(issue);
-
         App.update_facebook_like_button({
           name:         issue.tracker.name+": "+issue.title,
           caption:      issue.title,
@@ -139,6 +137,8 @@ with (scope('Show', 'Issue')) {
 
         a({ href: issue.accepted_solution.code_url, target: '_blank', 'class': 'blue', style: 'width: 200px; display: inline-block;' }, 'View Solution')
       );
+
+      return target_div;
     } else if (issue.submitted_solutions) {
       // select the first solution that was submitted
       var solution;
@@ -173,11 +173,11 @@ with (scope('Show', 'Issue')) {
             strong(formatted_date(solution.dispute_period_end_date)),
             ", then the solution will be accepted and the bounty paid out."
           )
-        )
+        );
+
+        return target_div;
       }
     }
-
-    return target_div;
   });
 
   define('github_user_html_box', function(options) {
