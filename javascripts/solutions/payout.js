@@ -1,51 +1,58 @@
 with (scope('Payout','Solution')) {
   route('#solutions/:solution_id/payout', function(solution_id) {
-    var target_div = div('Loading..');
-
     render(
       breadcrumbs(
         a({ href: '#' }, 'Home'),
         a({ href: '#solutions' }, 'My Solutions'),
-        span({ id: 'solution-title' }, 'Loading...')
+        'Loading...'
       ),
-      target_div
+      'Loading...'
     );
 
     BountySource.get_solution(solution_id, function(response) {
       if (response.meta.success) {
         var solution = response.data;
 
-        render({ target: 'solution-title' }, abbreviated_text(solution.issue.title, 80));
+        console.log(solution);
 
         // if the solution has not been accepted, render error and return
-        if (!solution.accepted || solution.disputed) return render({ into: target_div }, error_message("Solution has not yet been accepted."));
+        if (!solution.accepted || solution.disputed) {
+          render(error_message("Solution has not yet been accepted."));
+        } else {
+          var bounty_total      = solution.issue.bounty_total,
+              bountysource_fee  = solution.bountysource_cut,
+              developer_cut     = solution.developer_cut;
 
-        var bounty_total      = solution.issue.bounty_total,
-            bountysource_fee  = bounty_total * solution.bounty_source_tax,
-            developer_cut     = bounty_total - bountysource_fee;
-
-        render({ into: target_div },
-          form({ 'class': 'fancy' },
-            fieldset(
-              label('Bounty Total:'),
-              div({ style: 'font-size: 30px; display: inline; vertical-align: middle;' }, money(bounty_total))
+          render(
+            breadcrumbs(
+              a({ href: '#' }, 'Home'),
+              a({ href: '#solutions' }, 'My Solutions'),
+              a({ href: solution.frontend_path }, abbreviated_text(solution.issue.title, 50)),
+              'Payout'
             ),
 
-            fieldset(
-              label('Processing Fee:'),
-              div({ style: 'font-size: 30px; display: inline; vertical-align: middle;' }, money(bountysource_fee))
-            ),
+            form({ 'class': 'fancy' },
+              fieldset(
+                label('Bounty Total:'),
+                div({ style: 'font-size: 30px; display: inline; vertical-align: middle;' }, money(bounty_total, true))
+              ),
 
-            fieldset({ style: 'line-height: 70px;' },
-              label('Your Cut:'),
-              div({ style: 'font-size: 70px; display: inline; vertical-align: middle;' }, money(developer_cut))
-            ),
+              fieldset(
+                label('Processing Fee:'),
+                div({ style: 'font-size: 30px; display: inline; vertical-align: middle;' }, money(bountysource_fee, true))
+              ),
 
-            fieldset({ 'class': 'no-label' },
-              button({ 'class': 'green pledge-button', style: 'width: 300px;' }, 'Collect ' + money(developer_cut))
+              fieldset({ style: 'line-height: 70px;' },
+                label('Your Cut:'),
+                div({ style: 'font-size: 70px; display: inline; vertical-align: middle;' }, money(developer_cut, true))
+              ),
+
+              fieldset({ 'class': 'no-label' },
+                button({ 'class': 'green', style: 'width: 200px;' }, 'Collect ' + money(developer_cut, true))
+              )
             )
-          )
-        );
+          );
+        }
       } else {
         render({ into: target_div }, error_message(response.data.error));
       }
