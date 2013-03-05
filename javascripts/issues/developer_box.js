@@ -106,6 +106,7 @@ with (scope('DeveloperBox','Issue')) {
           p('"' + solution.body + '"'),
 
           a({ href: solution.code_url, target: '_blank', 'class': 'blue', style: 'width: 200px; display: inline-block;' }, 'View Solution'),
+
           p({ style: 'line-height: 25px;' },
             "If you feel that this solution does not sufficiently solve the issue, file a ",
             a({ href: 'mailto:support@bountysource.com?subject=Dispute - Issue ID#'+solution.issue.id+'&body='+solution.issue.frontend_url }, 'dispute'),
