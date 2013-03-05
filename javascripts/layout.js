@@ -494,14 +494,12 @@ with (scope('App')) {
 }
 
 with (scope('Columns')) {
-  initializer(function() {
+  define('create', function(options) {
     Columns._options  = { show_side: true };
     Columns._main     = div({ id: 'split-main' });
     Columns._side     = div({ id: 'split-side' });
     Columns._wrapper  = div({ id: 'split-wrapper' }, Columns._main, Columns._side);
-  });
 
-  define('create', function(options) {
     options = options || {};
 
     // show side by default
