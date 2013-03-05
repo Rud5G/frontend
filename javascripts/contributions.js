@@ -77,7 +77,7 @@ with (scope('Contributions', 'App')) {
     });
   });
 
-  route('#repos/:login/:repository/issues/:issue_number/bounties/:bounty_id/receipt', function(login, repository, issue_number, bounty_id) {
+  route('#issues/:issue_id/bounties/:bounty_id/receipt', function(login, repository, issue_number, bounty_id) {
     // if the pledge ID was not subbed into the URL, just go view the issue.
     // This will happen on Paypal cancel.
     if (/:bounty_id/.test(bounty_id)) return set_route('#repos/'+login+'/'+repository+'/issues/'+issue_number);

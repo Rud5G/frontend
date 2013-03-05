@@ -3,7 +3,7 @@ with (scope('Issue', 'App')) {
   define('issue_card', function(card) {
     return div({ 'class': 'card', onClick: curry(set_route, card.frontend_path) },
       div({ style: 'padding: 7px; background: #EEE; margin-bottom: 5px;' },
-        a({ href: '#repos/' + card.tracker.frontend_path}, img({ style: 'float: left; width: 40px; margin-bottom: 5px; margin-right: 10px; border-radius: 6px', src: card.tracker.image_url })),
+        a({ href: card.tracker.frontend_path}, img({ style: 'float: left; width: 40px; margin-bottom: 5px; margin-right: 10px; border-radius: 6px', src: card.tracker.image_url })),
         div({ style: 'margin-left: 50px; margin-top: 8px; font-size: 16px; font-weight: bold' }, a({ href: card.tracker.frontend_path, style: 'color: #333' }, card.tracker.name)),
 
         div({ style: 'clear: both' }),

@@ -17,8 +17,16 @@ with (scope('Home', 'App')) {
 
     render({ into: 'before-content' },
       section({ id: 'homepage' },
-        (logged_in() ? homepage_box_authed : homepage_box)(),
-//        card_filter_box(),
+
+        div({ style: "background: #f2f3f2; border: 10px solid white; box-shadow: 0 0 5px #ccc8be; margin-bottom: 15px"},
+          h1('The funding platform for open-source software.'),
+          h2('Improve the open-source projects you use by creating a Bounty on an issue.'),
+          get_started_actions(),
+          div({ style: 'clear: both; border-top: 2px solid #e0ab45; margin: 10px' }),
+          recent_people_div(),
+          !logged_in() && sign_in_with_buttons()
+        ),
+
         div({ id: 'column-container' }),
         div({ style: 'clear: both' }),
         div({ id: 'card-loader-div' }, 'Loading...')
@@ -31,7 +39,7 @@ with (scope('Home', 'App')) {
   });
 
   // render the homepage box, which always has recent signups at the bottom
-  define('homepage_box_layout', function() {
+  define('recent_people_div', function() {
     var recent_people_div = div();
     BountySource.recent_people(function(response) {
       var recent_people = response.data;
@@ -51,12 +59,7 @@ with (scope('Home', 'App')) {
       )
     });
 
-    return div({ style: "background: #f2f3f2; border: 10px solid white; box-shadow: 0 0 5px #ccc8be; margin-bottom: 15px"},
-      h1('The funding platform for open-source software.'),
-      arguments,
-      recent_people_div,
-      div({ style: 'clear: both' })
-    );
+    return recent_people_div;
   });
 
   define('card_filter_box', function() {
@@ -68,43 +71,40 @@ with (scope('Home', 'App')) {
     )
   });
 
-  define('homepage_box', function() {
-    return homepage_box_layout(
-      div({ style: 'text-align: center; padding: 30px 0 20px 0' },
-        span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic' }, 'Sign in with...'),
-        a({ 'class': "btn-auth btn-github large hover", style: 'margin-right: 20px', href: Github.auth_url() }, "GitHub"),
-        a({ 'class': "btn-auth btn-facebook large", style: 'margin-right: 20px', href: Facebook.auth_url() }, "Facebook"),
-        a({ 'class': "btn-auth btn-twitter large", style: 'margin-right: 20px', href: Twitter.auth_url() }, "Twitter"),
-        a({ 'class': "btn-auth btn-email large", style: 'margin-right: 20px', href: '#signin/email' }, "Email Address")
-        //div({ style: 'margin-bottom: 10px' }, a({ 'class': "btn-auth btn-google" }, "Sign in with Google"))
-      )
+  define('sign_in_with_buttons', function() {
+    return div({ style: 'text-align: center; margin: 10px 0' },
+      span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic' }, 'Sign in with...'),
+      a({ 'class': "btn-auth btn-github large hover", style: 'margin-right: 20px', href: Github.auth_url() }, "GitHub"),
+      a({ 'class': "btn-auth btn-facebook large", style: 'margin-right: 20px', href: Facebook.auth_url() }, "Facebook"),
+      a({ 'class': "btn-auth btn-twitter large", style: 'margin-right: 20px', href: Twitter.auth_url() }, "Twitter"),
+      a({ 'class': "btn-auth btn-email large", style: 'margin-right: 20px', href: '#signin/email' }, "Email Address")
+      //div({ style: 'margin-bottom: 10px' }, a({ 'class': "btn-auth btn-google" }, "Sign in with Google"))
     );
   });
 
 
-  define('homepage_box_authed', function() {
-    return homepage_box_layout(
-      div({ style: 'text-align: center; padding: 30px 0 30px 0;' },
+  define('get_started_actions', function() {
+    return div({ style: 'text-align: center; padding: 0 0 20px 0;' },
 
-        span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic' }, 'Get started...'),
+//      span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic' }, 'Get started...'),
+//
+//      button({ 'class': 'blue', style: 'width: 200px', onClick: curry(set_route, '#bounties') }, 'Browse All Bounties'),
+//
+//      span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic; padding: 0 25px'}, 'or'),
 
-        button({ 'class': 'blue', style: 'width: 200px', onClick: curry(set_route, '#bounties') }, 'Browse All Bounties'),
-
-        span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic; padding: 0 25px'}, 'or'),
-
-        form({ style: 'display: inline', action: function(form_data) { set_route('#repos/search?query='+escape(form_data.query)) } },
-          text({ name: 'query', style: 'width: 150px; line-height: 24px; padding: 0 15px; height: 40px; border: 1px solid #9dce5c;', placeholder: 'Project Name' }),
-          submit({ value: 'Search', 'class': 'green', style: 'width: 80px; margin-left: 3px;' })
-        ),
-        div({style: 'padding-top: 15px'},
-          span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic; padding: 0 25px'}, 'or'),
-
-          form({ style: 'display: inline', action: function(form_data) { set_route('#issues/create?url='+escape(form_data.url)) } },
-            text({ name: 'url', style: 'width: 250px; line-height: 24px; padding: 0 15px; height: 40px; border: 1px solid #9dce5c;', placeholder: 'Issue URL' }),
-            submit({ value: 'Create New Issue', 'class': 'green', style: 'width: 150px; margin-left: 3px;' })
-          )
-        )
+      form({ style: 'display: inline', action: Search.perform },
+        text({ name: 'query', style: 'width: 300px; line-height: 24px; padding: 0 15px; height: 40px; border: 1px solid #9dce5c;', placeholder: 'Issue URL, Project Name, Search Terms, etc.' }),
+        submit({ value: 'Search', 'class': 'green', style: 'width: 80px; margin-left: 3px;' })
       )
+//      ,
+//      div({style: 'padding-top: 15px'},
+//        span({ style: 'font-size: 20px; color: #888; margin-right: 20px; font-style: italic; padding: 0 25px'}, 'or'),
+//
+//        form({ style: 'display: inline', action: function(form_data) { set_route('#issues/create?url='+escape(form_data.url)) } },
+//          text({ name: 'url', style: 'width: 250px; line-height: 24px; padding: 0 15px; height: 40px; border: 1px solid #9dce5c;', placeholder: 'Issue URL' }),
+//          submit({ value: 'Create New Issue', 'class': 'green', style: 'width: 150px; margin-left: 3px;' })
+//        )
+//      )
     );
   });
 
