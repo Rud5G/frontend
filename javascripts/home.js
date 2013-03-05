@@ -85,7 +85,7 @@ with (scope('Home', 'App')) {
 
   define('get_started_actions', function() {
     return div({ style: 'text-align: center; padding: 0 0 20px 0;' },
-      form({ style: 'display: inline', action: Search.perform },
+      form({ style: 'display: inline', action: Search.search_from_homepage },
         text({ name: 'query', style: 'width: 300px; line-height: 24px; padding: 0 15px; height: 40px; border: 1px solid #9dce5c;', placeholder: 'Issue URL, Project Name, Search Terms, etc.' }),
         submit({ value: 'Search', 'class': 'green', style: 'width: 80px; margin-left: 3px;' })
       )
