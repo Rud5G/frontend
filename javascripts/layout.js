@@ -500,10 +500,11 @@ with (scope('Columns')) {
     Columns._side     = div({ id: 'split-side' });
     Columns._wrapper  = div({ id: 'split-wrapper' }, Columns._main, Columns._side);
 
+    // merge into Columns options
     options = options || {};
-
-    // show side by default
-    if (options.show_side) Columns._options.show_side = options.show_side;
+    for (var k in options) {
+      Columns._options[k] = options[k];
+    }
 
     return Columns._wrapper;
   });

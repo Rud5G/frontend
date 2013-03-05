@@ -339,3 +339,16 @@ input.autosized {
 
 #forkme { display: none; position: absolute; right: 0; top: 64px; }
 @media screen and (min-width: 1250px) { #forkme { display: block; } }
+
+.solution-row {
+  cursor: pointer;
+  height: 50px;
+
+  -webkit-transition: background ease-in 75ms;
+  -moz-transition:    background ease-in 75ms;
+  -o-transition:      background ease-in 75ms;
+  transition:         background ease-in 75ms;
+}
+.solution-row:hover {
+  background: #FFFFE4;
+}

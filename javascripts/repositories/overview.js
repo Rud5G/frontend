@@ -24,7 +24,9 @@ with (scope('Repository')) {
           repo.name
         ),
 
-        div({ 'class': 'split-main' },
+        Columns.create(),
+
+        Columns.main(
           section(
             img({ src: repo.image_url, style: 'width: 75px; height: 75px; vertical-align: middle; margin-right: 10px; float: left'}),
             h2({ style: 'margin: 0 0 10px 0' }, repo.name),
@@ -36,15 +38,15 @@ with (scope('Repository')) {
           issue_table({ header_class: 'thick-line-green' }, "Featured", repo.issues_featured),
           issue_table({ header_class: 'thick-line-blue' }, "Popular", repo.issues_popular),
           issue_table({ header_class: 'thick-line-orange' }, "Most Recent", repo.issues_newest),
-          
+
           div(
             div({ style: 'margin-top: 20px; width: 150px; float: left; padding-right: 20px' }, a({ 'class': 'blue', href: Repository.get_issues_href(repo) }, 'View All Issues')),
             // div({ style: 'margin-top: 20px; width: 180px; float: left;' }, a({ 'class': 'blue', href: '#repos/'+repo.full_name+'/donate'}, 'Donate to Project')),
             div({ style: 'clear: both '})
           )
         ),
-        div({ 'class': 'split-side' },
 
+        Columns.side(
           div({ 'class': 'stats', style: 'width: 150px; padding: 10px; margin: 20px auto auto auto;' },
             repo.bounty_total && div(
               h2(money(repo.bounty_total)),
@@ -66,28 +68,8 @@ with (scope('Repository')) {
               h2(formatted_number(repo.bounteous_issues_count)),
               h3({ 'class': 'blue-line' }, 'Issues with Bounties')
             )
-
-            // TODO: this isn't correct since the account can be withdrawn from
-            // TODO: add a total_donations column
-//            h2(money(repo.account_balance)),
-//            h3({ 'class': 'blue-line' }, 'Donations')
-
-//            h2('$999'),
-//            h3({ 'class': 'green-line' }, 'Payout Last Month')
           )
-          
-//          repo.committers && div({ style: 'background: #dff7cb; padding: 10px; margin-top: 20px' },
-//            h2({ style: 'color: #93a385; text-align: center; font-size: 18px; font-weight: normal; margin: 0 0 10px 0' }, "Committers"),
-//            ul({ style: 'margin: 0; padding: 0' }, repo.committers.map(function(commiter) {
-//              return li({ style: 'margin: 0 0 5px 0; padding: 0; list-style: none' },
-//                img({ src: 'https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-user-420.png', style: 'width: 32px; height: 32px; vertical-align: middle; margin-right: 10px' }),
-//                commiter
-//              );
-//            }))
-//          )
-
-        ),
-        div({ 'class': 'split-end' })
+        )
       );
     });
   });
