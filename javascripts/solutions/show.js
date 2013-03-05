@@ -40,7 +40,7 @@ with (scope('Show','Solution')) {
         } else if (Show.solution.submitted) {
           render({ into: Show.target_div },
             h2('Solution Submitted!'),
-            p("Awesome, we have received your proposed solution for this issue, and will keep track of it's status from here."),
+            p("Awesome, we have received your proposed solution for this issue, and will keep track of its status."),
 
             h3("Now what?"),
             p("The following needs to happen before you earn the bounty:"),
