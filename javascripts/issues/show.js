@@ -139,7 +139,7 @@ with (scope('Show', 'Issue')) {
 
   define('dispute_period_email_href', function(solution) {
     return  "mailto:support@bountysource.com?subject="+ encodeURIComponent("Dispute") +
-      "&body=" + encodeURIComponent("Solution ID: " + solution.id + "\nIssue Name: " + solution.issue.title + "\nIssue URL: " + solution.issue.frontend_path + "\n\nPlease describe the issue you have with Dev's solution:");
+      "&body=" + encodeURIComponent("Issue Name: " + solution.issue.title + "\nIssue URL: " + solution.issue.frontend_path + "\n\nPlease describe the issue you have with " + solution.person.display_name + "'s solution:");
   });
 
   define('github_user_html_box', function(options) {
