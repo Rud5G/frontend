@@ -61,7 +61,7 @@ with (scope('Profile','App')) {
                 ul(
                   profile.fundraisers.map(function(fundraiser) {
                     return li(
-                      a({ href: fundraiser.frontend_path }, abbreviated_text(fundraiser.title, 120))
+                      a({ href: fundraiser.frontend_path }, truncate(fundraiser.title, 120))
                     )
                   })
                 )
@@ -72,7 +72,7 @@ with (scope('Profile','App')) {
                 ul(
                   profile.bounties.map(function(bounty) {
                     return li(
-                      a({ href: bounty.issue.frontend_path }, abbreviated_text(bounty.issue.title, 120))
+                      a({ href: bounty.issue.frontend_path }, truncate(bounty.issue.title, 120))
                     )
                   })
                 )

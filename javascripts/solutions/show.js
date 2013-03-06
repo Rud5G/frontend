@@ -28,7 +28,7 @@ with (scope('Show','Solution')) {
           breadcrumbs(
             a({ href: '#' }, 'Home'),
             a({ href: '#solutions' }, 'My Solutions'),
-            abbreviated_text(solution.issue.title, 70)
+            truncate(solution.issue.title, 70)
           )
         );
 

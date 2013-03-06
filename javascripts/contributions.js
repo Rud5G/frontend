@@ -100,7 +100,7 @@ with (scope('Contributions', 'App')) {
 
         // render the title into the breadcrumbs
         render({ target: 'breadcrumbs-fundraiser-title' },
-          a({ href: pledge.fundraiser.frontend_path }, abbreviated_text(pledge.fundraiser.title, 50))
+          a({ href: pledge.fundraiser.frontend_path }, truncate(pledge.fundraiser.title, 50))
         );
 
         render({ into: target_div },

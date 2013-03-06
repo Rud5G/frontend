@@ -14,7 +14,7 @@ with (scope('Repository', 'App')) {
         div({ style: 'margin: 4px 0; font-size: 16px; font-weight: bold' }, a({ href: repository.frontend_path, style: 'color: #333' }, repository.name)),
 
         div({ style: 'overflow: auto; height: 60px; color: #999; font-size: 80%;' },
-          abbreviated_text(repository.description, 100)
+          truncate(repository.description, 100)
         ),
 
         // languages
@@ -26,7 +26,7 @@ with (scope('Repository', 'App')) {
       repository.most_bounteous_issues.map(function (issue) {
         var issue_url = repo_url + '/issues/' + issue.number;
         return div({ style: 'margin-bottom: 10px; font-size: 12px' },
-          a({ href: issue_url }, abbreviated_text(issue.title, 100)),
+          a({ href: issue_url }, truncate(issue.title, 100)),
           a({ href: issue_url, style: 'display: inline; vertical-align: middle; text-decoration: none; color: #48B848; margin-left: 8px' }, money(issue.bounty_total))
         )
       })

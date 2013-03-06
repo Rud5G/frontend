@@ -312,7 +312,7 @@ with (scope('App')) {
   });
 
   // abbreviate a body of text
-  define('abbreviated_text', function(text, max_length) {
+  define('truncate', function(text, max_length) {
     text = text || '';
     max_length = max_length || 100;
     return (text.length > max_length) ? (text.substr(0,max_length-3) + '...') : text;

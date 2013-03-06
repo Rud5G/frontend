@@ -27,7 +27,7 @@ with (scope('Index', 'Fundraiser')) {
             response.data.map(function(fundraiser) {
               // depends on whether or not it's published
               return tr({ style: 'height: 40px;' },
-                td(a({ href: fundraiser.frontend_path }, abbreviated_text(fundraiser.title, 100))),
+                td(a({ href: fundraiser.frontend_path }, truncate(fundraiser.title, 100))),
                 td(money(fundraiser.funding_goal || 0)),
                 td(fundraiser.published && percentage((fundraiser.total_pledged / fundraiser.funding_goal) * 100)),
                 td({ style: 'text-align: center;' }, fundraiser_published_status(fundraiser)),

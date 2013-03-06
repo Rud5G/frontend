@@ -19,7 +19,7 @@ with (scope('Pledge', 'Fundraiser')) {
           fundraiser  = response.data;
 
       // render the title of the fundraiser into header
-      render({ target: 'breadcrumbs-fundraiser-title' }, a({ href: fundraiser.frontend_path }, abbreviated_text(fundraiser.title, 60)));
+      render({ target: 'breadcrumbs-fundraiser-title' }, a({ href: fundraiser.frontend_path }, truncate(fundraiser.title, 60)));
 
       // require the fundraiser to be published
       if (!fundraiser.published) return render({ into: target_div }, error_message('Fundraiser has not been published.'));

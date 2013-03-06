@@ -443,7 +443,7 @@ with (scope('Edit', 'Fundraiser')) {
     return ul(
       li(money(reward.amount||0)),
       li(reward.limited_to ? span('(', formatted_number(reward.claimed), ' of ', formatted_number(reward.limited_to), ' left)') : 'Unlimited'),
-      li(abbreviated_text(reward.description, 60))
+      li(truncate(reward.description, 60))
     )
   });
 

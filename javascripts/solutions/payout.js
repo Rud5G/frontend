@@ -172,7 +172,7 @@ with (scope('Payout','Solution')) {
 //      if (response.meta.success) {
 //        var solution = response.data;
 //
-//        render({ target: 'solution-title' }, abbreviated_text(solution.issue.title, 80));
+//        render({ target: 'solution-title' }, truncate(solution.issue.title, 80));
 //
 //        // if the solution has not been accepted, render error and return
 //        if (!solution.paid_out) return render({ into: target_div }, error_message("Solution has not yet been accepted."));

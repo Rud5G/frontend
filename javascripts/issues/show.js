@@ -25,7 +25,7 @@ with (scope('Show', 'Issue')) {
             a({ href: '#' }, 'Home'),
             a({ href: '#trackers/' + issue.tracker.slug }, issue.tracker.name),
             //a({ href: '#trackers/' + issue.tracker.slug + '/issues' }, 'Issues'),
-            abbreviated_text(issue.title,40)
+            truncate(issue.title,40)
           ),
 
           Columns.create({
@@ -51,8 +51,13 @@ with (scope('Show', 'Issue')) {
             issue.body_html && github_user_html_box(issue),
 
             div({ style: 'margin: 25px 0;' },
-              div({ style: 'display: inline-block; vertical-align: middle; margin-right: 10px;' }, 'For more information, or to comment:'),
-              a({ 'class': 'btn-auth btn-github', style: 'display: inline-block; vertical-align: middle;', href: issue.url, target: '_blank' }, 'View Issue on GitHub')
+              issue.url.match(/github\.com/) ? [
+                div({ style: 'display: inline-block; vertical-align: middle; margin-right: 10px;' }, 'For more information, or to comment:'),
+                a({ 'class': 'btn-auth btn-github', style: 'display: inline-block; vertical-align: middle;', href: issue.url, target: '_blank' }, 'View Issue on GitHub')
+              ] : [
+                'For more information, view the issue details at: ',
+                a({ href: issue.url, target: '_blank', }, truncate(issue.url,40))
+              ]
             ),
 
             issue.comments && issue.comments.length > 0 && div(

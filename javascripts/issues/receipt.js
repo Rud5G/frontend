@@ -13,7 +13,7 @@ with (scope('Issue', 'App')) {
         breadcrumbs(
           a({ href: '#' }, 'Home'),
           a({ href: bounty.issue.tracker.frontend_path }, bounty.issue.tracker.name),
-          a({ href: bounty.issue.frontend_path }, bounty.issue.title),
+          a({ href: bounty.issue.frontend_path }, truncate(bounty.issue.title,40)),
           'Bounty Receipt'
         ),
 
