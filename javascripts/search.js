@@ -45,7 +45,7 @@ with (scope('Search', 'App')) {
 
           Columns.main(
             results.trackers && div(
-              h1('Trackers Matching Your Search'),
+              h1('Projects Matching Your Search'),
               table(
                 tr(
                   th(),
@@ -67,7 +67,7 @@ with (scope('Search', 'App')) {
               h1('Issues Matching Your Search'),
               table(
                 tr(
-                  th('Tracker'),
+                  th('Project'),
                   th('Title'),
                   th('Bounties')
                 ),
