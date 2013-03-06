@@ -80,7 +80,7 @@ with (scope('Show', 'Fundraiser')) {
               )
             ),
 
-            a({ 'class': 'blue', href: fundraiser.edit_url, style: 'padding: 5px 0;' },
+            a({ 'class': 'blue', href: fundraiser.frontend_edit_path, style: 'padding: 5px 0;' },
               div({ style: 'display: inline-block; width: 25%;' },
                 img({ src: 'images/edit_32.gif', style: 'vertical-align: middle;' })
               ),
@@ -89,7 +89,7 @@ with (scope('Show', 'Fundraiser')) {
 
 // TODO: info page for fundraiser author to see contributions and rewards that have been claimed
 //            br(),
-//            a({ 'class': 'blue', href: fundraiser.edit_url+'/info', style: 'padding: 5px 0;' },
+//            a({ 'class': 'blue', href: fundraiser.frontend_edit_path+'/info', style: 'padding: 5px 0;' },
 //              div({ style: 'display: inline-block; width: 25%px;' },
 //                img({ src: 'images/info_32.gif', style: 'vertical-align: middle;' })
 //              ),

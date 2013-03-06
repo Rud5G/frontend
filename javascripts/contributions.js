@@ -100,7 +100,7 @@ with (scope('Contributions', 'App')) {
 
         // render the title into the breadcrumbs
         render({ target: 'breadcrumbs-fundraiser-title' },
-          a({ href: pledge.fundraiser.url }, abbreviated_text(pledge.fundraiser.title, 50))
+          a({ href: pledge.fundraiser.frontend_path }, abbreviated_text(pledge.fundraiser.title, 50))
         );
 
         render({ into: target_div },
@@ -115,7 +115,7 @@ with (scope('Contributions', 'App')) {
 
             div(
               Facebook.create_share_button({
-                link:         BountySource.www_host+pledge.fundraiser.url,
+                link:         BountySource.www_host+pledge.fundraiser.frontend_url,
                 name:         "I just backed "+pledge.fundraiser.title,
                 caption:      pledge.fundraiser.short_description,
                 description:  "BountySource is the funding platform for open-source software, contribute by making a pledge to this fundraiser!",
@@ -123,7 +123,7 @@ with (scope('Contributions', 'App')) {
               }, a({ 'class': 'btn-auth btn-facebook large', style: 'margin-right: 10px;' }, 'Share')),
 
               Twitter.create_share_button({
-                url:  BountySource.www_host+pledge.fundraiser.url,
+                url:  BountySource.www_host+pledge.fundraiser.frontend_url,
                 text: money(pledge.amount)+" pledge made to "+pledge.fundraiser.title,
                 via:  'BountySource'
               }, a({ 'class': 'btn-auth btn-twitter large', style: 'margin-right: 10px;' }, 'Tweet'))
