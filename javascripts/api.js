@@ -288,5 +288,9 @@ with (scope('BountySource')) {
 
   define('create_issue', function(data, callback) {
     api('/issues', 'POST', data, callback);
-  })
+  });
+
+  define('payout_solution', function(id, data, callback) {
+    api('/user/solutions/'+id+'/payout', 'POST', data, callback);
+  });
 }

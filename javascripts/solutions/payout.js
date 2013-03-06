@@ -202,7 +202,10 @@ with (scope('Payout','Solution')) {
   });
 
   define('payout', function(form_data) {
-    BountySource.payout_solution(solution.id, form_data, function(response) {
+    BountySource.payout_solution(Payout.solution.id, form_data, function(response) {
+
+      console.log(response);
+
       if (response.meta.success) {
 
       } else {
