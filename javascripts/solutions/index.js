@@ -39,7 +39,7 @@ with (scope('Solution', 'App')) {
   });
 
   define('solution_row', function(solution) {
-    return tr({ 'class': 'solution-row', onClick: curry(set_route, solution.accepted ? solution.frontend_path+'/payout' : solution.frontend_path) },
+    return tr({ 'class': 'solution-row', onClick: curry(set_route, solution.accepted ? solution.frontend_path : solution.frontend_path) },
       td(a({ href: solution.issue.frontend_path }, truncate(solution.issue.title, 60))),
       td({ style: 'text-align: center; '}, status_element(solution))
     );

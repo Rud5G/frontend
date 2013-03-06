@@ -5,8 +5,10 @@ with (scope('Solution','App')) {
   });
 
   define('status_element', function(solution) {
-    if (solution.accepted) {
-      return span({ style: 'background: #83d11a; border-radius: 4px; padding: 4px; color: white' }, 'Accepted!');
+    if (solution.paid_out) {
+      return span({ style: 'background: #83d11a; border-radius: 4px; padding: 4px; color: white' }, 'Paid Out');
+    } else if (solution.accepted) {
+      return span({ style: 'background: #83d11a; border-radius: 4px; padding: 4px; color: white' }, 'Accepted');
     } else if (solution.disputed) {
       return span({ style: 'background: #F3B13C; border-radius: 4px; padding: 4px; color: white' }, 'Disputed');
     } else if (solution.submitted) {
@@ -27,7 +29,7 @@ with (scope('Solution','App')) {
     if (solution.accepted && !solution.disputed && !solution.in_dispute_period) {
       return div({ style: 'margin: 5px 0;' },
         small_success_message({ close_button: false, style: 'margin: 5px 0;' }, 'Solution accepted!'),
-        a({ 'class': 'green', href: '#solutions/'+solution.id+'/payout' }, 'Claim Bounty!')
+        a({ 'class': 'green', href: '#solutions/'+solution.id }, 'Claim Bounty!')
       );
     } else if (solution.disputed) {
       return div({ style: 'margin: 5px 0;' },
