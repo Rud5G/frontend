@@ -1,6 +1,8 @@
 with (scope('Payout','Solution')) {
 
   define('page_for_solution', function(solution) {
+    Payout.errors_div = div();
+
     // cache the solution
     Payout.solution = solution;
 
@@ -77,6 +79,8 @@ with (scope('Payout','Solution')) {
       }
 
       return div(
+        Payout.errors_div,
+
         form({ action: payout },
           Columns.create({ show_side: true })
         ),
@@ -188,14 +192,13 @@ with (scope('Payout','Solution')) {
 //  });
 
   define('payout', function(form_data) {
+    render({ into: Payout.errors_div }, '');
+
     BountySource.payout_solution(Payout.solution.id, form_data, function(response) {
-
-      console.log(response);
-
       if (response.meta.success) {
-
+        set_route(get_route());
       } else {
-
+        render({ into: Payout.errors_div }, error_message(response.data.error));
       }
     });
   });
