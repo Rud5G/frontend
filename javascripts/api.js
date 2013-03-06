@@ -286,18 +286,7 @@ with (scope('BountySource')) {
     api('/issues/'+issue_id+'/solutions', callback);
   });
 
-  define('try_create_issue', function(url, callback) {
-    api('/issues/try_create', callback);
-  });
-
-  define('create_issue', function(data, success_callback, error_callback) {
-    var callback = function(response) {
-      if(response.meta.success) {
-        success_callback(response);
-      } else {
-        error_callback(response);
-      }
-    }
+  define('create_issue', function(data, callback) {
     api('/issues', 'POST', data, callback);
   })
 }
