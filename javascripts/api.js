@@ -117,21 +117,9 @@ with (scope('BountySource')) {
     api('/user/request_password_reset', 'POST', data, callback);
   });
 
-  define('search_users', function(term, callback) {
-    api('/github/user/search/' + term, callback);
+  define('search', function(query, callback) {
+    api('/search', 'POST', { query: query }, callback);
   });
-
-  define('search_repositories', function(term, callback) {
-    api('/github/repos/search', 'GET', { query: term }, callback);
-  });
-
-  define('search_issues', function(login, repository, term, callback) {
-    api('/github/issues/search/'+login+'/'+repository+'/'+term, callback);
-  });
-
-//  define('get_repository', function(login, repository, callback) {
-//    api('/github/repos/'+login+'/'+repository, callback);
-//  });
 
   define('get_tracker', function(tracker_id, callback) {
     api('/trackers/'+tracker_id, callback);
@@ -298,56 +286,7 @@ with (scope('BountySource')) {
     api('/issues/'+issue_id+'/solutions', callback);
   });
 
-  define('try_create_issue', function(url, callback) {
-    // api('/issues/try_create', callback);
-    var response = {}; // mock the data for now
-    response.data = {}
-    // response.data.issue = {
-    //   bounty_total: 100,
-    //   number: 1,
-    //   closed: false,
-    //   code: false,
-    //   repository: {
-    //     full_name: "thailehuy/hblog",
-    //     url: "http://www.github.com/thailehuy/hblog/",
-    //     type: "Github::Repository"
-    //   }
-    // }
-
-    response.data.repository = {
-      full_name: "thailehuy/hblog",
-      url: "http://www.github.com/thailehuy/hblog/",
-      type: "Github::Repository"
-    }
-    callback(response);
-  });
-
-  define('create_issue', function(data, success_callback, error_callback) {
-    var callback = function(response) {
-      if(response.meta.success) {
-        success_callback(response);
-      } else {
-        error_callback(response);
-      }
-    }
-    // api('/issues', 'POST', data, callback);
-
-    var response = {}; // mock the data for now
-    response.meta = {};
-    response.meta.success = true;
-    response.data = {}
-    response.data.issue = {
-      bounty_total: 100,
-      number: 1,
-      closed: false,
-      code: false,
-      frontend_url: '#repos/thailehuy/hblog/issues/1',
-      repository: {
-        full_name: "thailehuy/hblog",
-        url: "http://www.github.com/thailehuy/hblog/",
-        type: "Github::Repository"
-      }
-    }
-    callback(response);
+  define('create_issue', function(data, callback) {
+    api('/issues', 'POST', data, callback);
   })
 }

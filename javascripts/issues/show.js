@@ -178,6 +178,7 @@ with (scope('Show', 'Issue')) {
         return target_div;
       }
     }
+
   });
 
   define('github_user_html_box', function(options) {

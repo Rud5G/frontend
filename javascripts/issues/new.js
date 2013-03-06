@@ -1,68 +1,64 @@
 with (scope('Issue', 'App')) {
 
-  route('#trackers/:tracker_id/issues/new', function(tracker_id) {
-    var target_div = div('Loading...');
+  route('#issues/new', function() {
     var params = get_params();
 
-    render(target_div);
+    render(
+      breadcrumbs(
+        a({ href: '#' }, 'Home'),
+        'Add Issue'
+      ),
 
-    BountySource.get_repository_overview(tracker_id, function(response) {
-      if (!response.meta.success) return render({ into: target_div }, response.data.error || response.data.message);
+      section({ style: 'padding: 21px' },
+        form({ 'class': 'fancy', action: create_issue },
 
-      var repo = response.data;
+          div({ id: 'create-issue-errors' }),
 
-      render({into: target_div},
-        breadcrumbs(
-          a({ href: '#' }, 'Home'),
-          a({ href: repo.frontend_path }, repo.name),
-          a({ href: repo.frontend_path + '/issues' }, 'Issues'),
-          'New'
-        ),
+          div("Please help us out by adding missing Issues to BountySource."),
 
-        section({ style: 'padding: 21px' },
-          form({ action: curry(add_issue, repo) },
+          fieldset(
+            label({ 'for': 'url-input' }, 'Issue URL:'),
+            text({ name: 'issue_url', id: 'url-input', value: params.url, placeholder: 'https://trac.someproject.com/ticket/123', 'class': 'long' })
+          ),
 
-            div({ id: 'create-issue-errors' }),
+          fieldset(
+            label({ 'for': 'title-input' }, 'Issue Title:'),
+            text({ name: 'title', id: 'title-input', value: '', placeholder: 'Copy and Paste the title of the issue.', 'class': 'long' })
+          ),
 
-            div({ 'class': 'title' },
-              label({ 'for': 'title-input' }, 'Title'),
-              text({ name: 'title', id: 'title-input', value: '', placeholder: 'Issue Title' })
-            ),
+          fieldset(
+            label({ 'for': 'number-input' }, 'Issue Number:'),
+            text({ name: 'number', id: 'number-input', value: '', placeholder: '123', 'class': 'short' })
+          ),
 
-            div({ 'class': 'number' },
-              label({ 'for': 'number-input' }, 'Number'),
-              text({ name: 'number', id: 'number-input', value: '', placeholder: 'Issue Number' })
-            ),
+          div("Please provide some basic information about the project."),
 
-            div({ 'class': 'url' },
-              label({ 'for': 'url-input' }, 'URL'),
-              text({ name: 'url', id: 'url-input', value: '', placeholder: 'Issue URL' })
-            ),
+          fieldset(
+            label({ 'for': 'number-input' }, 'Project Name:'),
+            text({ name: 'project_name', id: 'number-input', value: '', placeholder: 'Project Name' })
+          ),
 
-            submit({ 'class': 'blue' }, 'Create Issue')
+          fieldset(
+            label({ 'for': 'number-input' }, 'Project Tracker URL:'),
+            text({ name: 'project_url', id: 'number-input', value: '', placeholder: 'https://trac.someproject.com/' })
+          ),
+
+          fieldset({ 'class': 'no-label '},
+            submit({ 'class': 'blue' }, 'Add Issue')
           )
         )
       )
-    });
+    );
   });
 
-  define('add_issue', function(repo, form_data) {
-    var issue_data = {
-      title: form_data.title,
-      number: form_data.number,
-      url: form_data.url
-    };
-
-    BountySource.create_issue(
-      issue_data,
-      function(response) {
-        var issue = response.data.issue;
-        set_route(issue.frontend_url);
-      },
-      function(response) {
-        render({ target: 'create-issue-errors' }, error_message(response));
+  define('create_issue', function(form_data) {
+    BountySource.create_issue(form_data, function(response) {
+      if (response.meta.success) {
+        set_route(response.data.frontend_path);
+      } else {
+        render({ target: 'create-issue-errors' }, error_message(response.data.error));
       }
-    );
+    });
   });
 
 }
