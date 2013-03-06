@@ -33,11 +33,7 @@ with (scope('Show','Solution')) {
         );
 
         if (solution.accepted) {
-          render({ into: Show.target_div },
-            h2('Solution Accepted!'),
-            p('Congrats, your solution has been accepted, and you won the bounty!'),
-            a({ 'class': 'green', style: 'display: inline-block;', href: solution.frontend_path+'/payout' }, 'Collect Thy Booty')
-          );
+          render({ into: Show.target_div }, Payout.page_for_solution(solution));
         } else if (solution.submitted) {
           render({ into: Show.target_div },
             h2('Solution Submitted!'),
